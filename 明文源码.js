@@ -1,502 +1,480 @@
+// @ts-nocheck
+// Overclocked-Boost Core by U3jit - ProjectOptimize By Claxpoint - Project by BPB
+// SampleSource and idea for BPB // پنل گل افزانی 🇮🇷 
+// U3jit - High.Multi.Protocol 
+//Also thanks to bia-pain-bache
+//Frist BPB Persian panel! - UltraOverclocked-and-Boosted! onPROXY AND IPS,IpVX- 
+// github.com/claxpoint
+//U3jit: A way for Free ,A way to Be Free
+
+//Remember to change the golafzani_panel2.js name to worker.js on coudflare worker editor
+//Documents: https://github.com/claxpoint/golafzani-panel2/blob/main/README.md
 
 import { connect } from 'cloudflare:sockets';
 
-let userID = '';
-let proxyIP = '';
-let sub = '';
-let subConverter = 'SUBAPI.fxxk.dedyn.io';
-let subConfig = "https://raw.githubusercontent.com/ACL4SSR/ACL4SSR/master/Clash/config/ACL4SSR_Online_Mini_MultiMode.ini";
-let subProtocol = 'https';
-let subEmoji = 'true';
-let socks5Address = '';
-let parsedSocks5Address = {}; 
-let enableSocks = false;
+// یویوآیدی را تنظیم کنید
+// بهترین سایت برای برداشتن یویوآیدی اختصاصی: https://fusionauth.io/dev-tools/uuid-generator
+let userID = '026bb560-86bc-4658-86f4-16f424e3aef7';
 
-let fakeUserID ;
-let fakeHostName ;
-let noTLS = 'false'; 
-const expire = 4102329600;//2099-12-31
-let proxyIPs;
-let socks5s;
-let go2Socks5s = [
-	'*ttvnw.net',
-	'*tapecontent.net',
-	'*cloudatacdn.com',
-	'*.loadshare.org',
-];
-let addresses = [];
-let addressesapi = [];
-let addressesnotls = [];
-let addressesnotlsapi = [];
-let addressescsv = [];
-let DLS = 8;
-let remarkIndex = 1;//CSV备注所在列偏移量
-let FileName = atob('ZWRnZXR1bm5lbA==');
-let BotToken;
-let ChatID; 
-let proxyhosts = [];
-let proxyhostsURL = '';
-let RproxyIP = 'false';
-let httpsPorts = ["2053","2083","2087","2096","8443"];
-let 有效时间 = 7;
-let 更新时间 = 3;
-let userIDLow;
-let userIDTime = "";
-let proxyIPPool = [];
-let path = '/?ed=2560';
-let 动态UUID;
-let link = [];
-let banHosts = [atob('c3BlZWQuY2xvdWRmbGFyZS5jb20=')];
+ 
+//در صورت ارور یویوآیدی یبار یویوآیدی را پاک کرده و دوباره وارد کنید و دپلوی و سیو را بزنید
+
+//بهترین بات تلگرام آی پی تمیز = @cfcleanipbot
+
+
+// ClaxpointNote: its better to use OPipTamiz for proxyIp
+const proxyIPs = ['cdn.xn--b6gac.eu.org', 'cdn-all.xn--b6gac.eu.org', 'workers.cloudflare.cyou', 'edgetunnel.anycast.eu.org', 'engane.cloudflareclient.com', 'u3jit.pages.dev'];
+//این پروکسی آی پی اختصاصی است و هر بار آی پی لاکر آن تغییر میکند
+//بدون نیاز به تغییر پروکسی این پروکسی لایه های پروکسی دارد
+// هسته این پروکسی از نوع U3jit میباشد
+// پروکسی u3jit.pages.dev: یک پروکسی قوی بدون نیاز به تغییر در صورت فیلتر شدن به دلیل بروزرسانی دی ان اس 
+// و آی پی و دارای آی پی سیستم یوتری.جیت میباشد
+
+// همچنین به دلایل مختلفی که کاربران اعتقاد به وجود سیستم پراکسی نداشتند ما به صورت دستی وارد
+// این سورس کد وارد کردیم
+
+//set WTO.gov - BUZ / change and connect to u3jit.pages.dev to use proxy
+//set WTO.eu - BUZ /
+//set www.dns0.eu - BUZ /
+let proxyIP = proxyIPs[Math.floor(Math.random() * proxyIPs.length)];
+//Best way for a DNS query
+
+
+let dohURL = 'https://sky.rethinkdns.com/1:-Pf_____9_8A_AMAIgE8kMABVDDmKOHTAKg='; // RaN SYSClx
+// https://cloudflare-dns.com/dns-query - خوبه بدک نیست
+// https://dns.google/dns-query - اوکیه
+// https://u3jit.pages.dev - بهتره
+// https://sky.rethinkdns.com/1:-Pf_____9_8A_AMAIgE8kMABVDDmKOHTAKg= - لوکال / بهتره
+
+
+let panelVersion = '0.5';
+
+if (!isValidUUID(userID)) {
+    throw new Error('یویوآیدی اشتباه است');
+}
+
 export default {
-	async fetch(request, env, ctx) {
-		try {
-			const UA = request.headers.get('User-Agent') || 'null';
-			const userAgent = UA.toLowerCase();
-			userID = env.UUID || env.uuid || env.PASSWORD || env.pswd || userID;
-			if (env.KEY || env.TOKEN || (userID && !isValidUUID(userID))) {
-				动态UUID = env.KEY || env.TOKEN || userID;
-				有效时间 = Number(env.TIME) || 有效时间;
-				更新时间 = Number(env.UPTIME) || 更新时间;
-				const userIDs = await 生成动态UUID(动态UUID);
-				userID = userIDs[0];
-				userIDLow = userIDs[1];
-			}
+    /**
+     * @param {import("@cloudflare/workers-types").Request} request
+     * @param {{UUID: string, PROXYIP: string, DNS_RESOLVER_URL: string}} env
+     * @param {import("@cloudflare/workers-types").ExecutionContext} ctx
+     * @returns {Promise<Response>}
+     */
+    async fetch(request, env, ctx) {
+        try {
+            
+          // node_modules/uuid/dist/esm-browser/regex.js
+const UUID_REGEX = /^(?:[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}|00000000-0000-0000-0000-000000000000)$/i;
 
-			if (!userID) {
-				return new Response('请设置你的UUID变量，或尝试重试部署，检查变量是否生效？', { 
-					status: 404,
-					headers: {
-						"Content-Type": "text/plain;charset=utf-8",
-					}
-				});
-			}
-			const currentDate = new Date();
-			currentDate.setHours(0, 0, 0, 0); 
-			const timestamp = Math.ceil(currentDate.getTime() / 1000);
-			const fakeUserIDMD5 = await 双重哈希(`${userID}${timestamp}`);
-			fakeUserID = [
-				fakeUserIDMD5.slice(0, 8),
-				fakeUserIDMD5.slice(8, 12),
-				fakeUserIDMD5.slice(12, 16),
-				fakeUserIDMD5.slice(16, 20),
-				fakeUserIDMD5.slice(20)
-			].join('-');
-			
-			fakeHostName = `${fakeUserIDMD5.slice(6, 9)}.${fakeUserIDMD5.slice(13, 19)}`;
+// node_modules/uuid/dist/esm-browser/validate.js
+function isValidUUID(uuid) {
+    return typeof uuid === "string" && UUID_REGEX.test(uuid);
+}
 
-			proxyIP = env.PROXYIP || env.proxyip || proxyIP;
-			proxyIPs = await 整理(proxyIP);
-			proxyIP = proxyIPs[Math.floor(Math.random() * proxyIPs.length)];
+// node_modules/uuid/dist/esm-browser/stringify.js
+function byteToHexStr(arr, offset = 0) {
+    return Array.from(arr.slice(offset, offset + 16), (byte) => ('0' + byte.toString(16)).slice(-2)).join('');
+}
 
-			socks5Address = env.SOCKS5 || socks5Address;
-			socks5s = await 整理(socks5Address);
-			socks5Address = socks5s[Math.floor(Math.random() * socks5s.length)];
-			socks5Address = socks5Address.split('//')[1] || socks5Address;
-			if (env.GO2SOCKS5) go2Socks5s = await 整理(env.GO2SOCKS5);
-			if (env.CFPORTS) httpsPorts = await 整理(env.CFPORTS);
-			if (env.BAN) banHosts = await 整理(env.BAN);
-			if (socks5Address) {
-				try {
-					parsedSocks5Address = socks5AddressParser(socks5Address);
-					RproxyIP = env.RPROXYIP || 'false';
-					enableSocks = true;
-				} catch (err) {
-					let e = err;
-					console.log(e.toString());
-					RproxyIP = env.RPROXYIP || !proxyIP ? 'true' : 'false';
-					enableSocks = false;
-				}
-			} else {
-				RproxyIP = env.RPROXYIP || !proxyIP ? 'true' : 'false';
-			}
+function stringifyUUID(arr, offset = 0) {
+    const uuid = byteToHexStr(arr, offset).toLowerCase();
+    if (!isValidUUID(uuid)) {
+        throw new Error("زدی به فنا دادی یویوآیدی رو");
+    }
+    return uuid;
+}
 
-			const upgradeHeader = request.headers.get('Upgrade');
-			const url = new URL(request.url);
-			if (!upgradeHeader || upgradeHeader !== 'websocket') {
-				if (env.ADD) addresses = await 整理(env.ADD);
-				if (env.ADDAPI) addressesapi = await 整理(env.ADDAPI);
-				if (env.ADDNOTLS) addressesnotls = await 整理(env.ADDNOTLS);
-				if (env.ADDNOTLSAPI) addressesnotlsapi = await 整理(env.ADDNOTLSAPI);
-				if (env.ADDCSV) addressescsv = await 整理(env.ADDCSV);
-				DLS = Number(env.DLS) || DLS;
-				remarkIndex = Number(env.CSVREMARK) || remarkIndex;
-				BotToken = env.TGTOKEN || BotToken;
-				ChatID = env.TGID || ChatID; 
-				FileName = env.SUBNAME || FileName;
-				subEmoji = env.SUBEMOJI || env.EMOJI || subEmoji;
-				if (subEmoji == '0') subEmoji = 'false';
-				if (env.LINK) link = await 整理(env.LINK) ;
-				sub = env.SUB || sub;
-				subConverter = env.SUBAPI || subConverter;
-				if (subConverter.includes("http://") ){
-					subConverter = subConverter.split("//")[1];
-					subProtocol = 'http';
-				} else {
-					subConverter = subConverter.split("//")[1] || subConverter;
-				}
-				subConfig = env.SUBCONFIG || subConfig;
-				if (url.searchParams.has('sub') && url.searchParams.get('sub') !== '') sub = url.searchParams.get('sub');
-				if (url.searchParams.has('notls')) noTLS = 'true';
+// libs/vless-js/src/lib/vless-js.ts
+const WS_READY_STATE_OPEN = 1;
 
-				if (url.searchParams.has('proxyip')) {
-					path = `/?ed=2560&proxyip=${url.searchParams.get('proxyip')}`;
-					RproxyIP = 'false';
-				} else if (url.searchParams.has('socks5')) {
-					path = `/?ed=2560&socks5=${url.searchParams.get('socks5')}`;
-					RproxyIP = 'false';
-				} else if (url.searchParams.has('socks')) {
-					path = `/?ed=2560&socks5=${url.searchParams.get('socks')}`;
-					RproxyIP = 'false';
-				}
+function processVlessHeader(vlessBuffer, userID) {
+    // Implementation of processVlessHeader function
+}
 
-				const 路径 = url.pathname.toLowerCase();
-				if (路径 == '/') {
-					if (env.URL302) return Response.redirect(env.URL302, 302);
-					else if (env.URL) return await 代理URL(env.URL, url);
-					else return new Response(JSON.stringify(request.cf, null, 4), {
-						status: 200,
-						headers: {
-							'content-type': 'application/json',
-						},
-					});
-				} else if (路径 == `/${fakeUserID}`) {
-					const fakeConfig = await 生成配置信息(userID, request.headers.get('Host'), sub, 'CF-Workers-SUB', RproxyIP, url, env);
-					return new Response(`${fakeConfig}`, { status: 200 });
-				} else if (url.pathname == `/${动态UUID}/edit` || 路径 == `/${userID}/edit`) {
-					const html = await KV(request, env);
-					return html;
-				} else if (url.pathname == `/${动态UUID}` || 路径 == `/${userID}`) {
-					await sendMessage(`#获取订阅 ${FileName}`, request.headers.get('CF-Connecting-IP'), `UA: ${UA}</tg-spoiler>\n域名: ${url.hostname}\n<tg-spoiler>入口: ${url.pathname + url.search}</tg-spoiler>`);
-					const 维列斯Config = await 生成配置信息(userID, request.headers.get('Host'), sub, UA, RproxyIP, url, env);
-					const now = Date.now();
-					//const timestamp = Math.floor(now / 1000);
-					const today = new Date(now);
-					today.setHours(0, 0, 0, 0);
-					const UD = Math.floor(((now - today.getTime())/86400000) * 24 * 1099511627776 / 2);
-					let pagesSum = UD;
-					let workersSum = UD;
-					let total = 24 * 1099511627776 ;
+// libs/cf-worker-vless/src/cf-worker-vless.ts
 
-					if (userAgent && userAgent.includes('mozilla')){
-						return new Response(`<div style="font-size:13px;">${维列斯Config}</div>`, {
-							status: 200,
-							headers: {
-								"Content-Type": "text/html;charset=utf-8",
-								"Profile-Update-Interval": "6",
-								"Subscription-Userinfo": `upload=${pagesSum}; download=${workersSum}; total=${total}; expire=${expire}`,
-								"Cache-Control": "no-store",
-							}
-						});
-					} else {
-						return new Response(`${维列斯Config}`, {
-							status: 200,
-							headers: {
-								"Content-Disposition": `attachment; filename=${FileName}; filename*=utf-8''${encodeURIComponent(FileName)}`,
-								"Content-Type": "text/plain;charset=utf-8",
-								"Profile-Update-Interval": "6",
-								"Subscription-Userinfo": `upload=${pagesSum}; download=${workersSum}; total=${total}; expire=${expire}`,
-							}
-						});
-					}
-				} else {
-					if (env.URL302) return Response.redirect(env.URL302, 302);
-					else if (env.URL) return await 代理URL(env.URL, url);
-					else return new Response('不用怀疑！你UUID就是错的！！！', { status: 404 });
-				}
-			} else {
-				socks5Address = url.searchParams.get('socks5') || socks5Address;
-				if (new RegExp('/socks5=', 'i').test(url.pathname)) socks5Address = url.pathname.split('5=')[1];
-				else if (new RegExp('/socks://', 'i').test(url.pathname) || new RegExp('/socks5://', 'i').test(url.pathname)) {
-					socks5Address = url.pathname.split('://')[1].split('#')[0];
-					if (socks5Address.includes('@')){
-						let userPassword = socks5Address.split('@')[0];
-						const base64Regex = /^(?:[A-Z0-9+/]{4})*(?:[A-Z0-9+/]{2}==|[A-Z0-9+/]{3}=)?$/i;
-						if (base64Regex.test(userPassword) && !userPassword.includes(':')) userPassword = atob(userPassword);
-						socks5Address = `${userPassword}@${socks5Address.split('@')[1]}`;
-					}
-				}
 
-				if (socks5Address) {
-					try {
-						parsedSocks5Address = socks5AddressParser(socks5Address);
-						enableSocks = true;
-					} catch (err) {
-						let e = err;
-						console.log(e.toString());
-						enableSocks = false;
-					}
-				} else {
-					enableSocks = false;
-				}
+async function delay(ms) {
+    return new Promise((resolve) => setTimeout(resolve, ms));
+}
 
-				if (url.searchParams.has('proxyip')){
-					proxyIP = url.searchParams.get('proxyip');
-					enableSocks = false;
-				} else if (new RegExp('/proxyip=', 'i').test(url.pathname)) {
-					proxyIP = url.pathname.toLowerCase().split('/proxyip=')[1];
-					enableSocks = false;
-				} else if (new RegExp('/proxyip.', 'i').test(url.pathname)) {
-					proxyIP = `proxyip.${url.pathname.toLowerCase().split("/proxyip.")[1]}`;
-					enableSocks = false;
-				}
-
-				return await 维列斯OverWSHandler(request);
-			}
-		} catch (err) {
-			let e = err;
-			return new Response(e.toString());
-		}
-	},
+const cfWorkerVless = {
+    async fetch(request, env, ctx) {
+        // Implementation of fetch function
+    }
 };
 
-async function 维列斯OverWSHandler(request) {
+            userID = env.UUID || userID;
+            proxyIP = env.PROXYIP || proxyIP;
+            dohURL = env.DNS_RESOLVER_URL || dohURL;
+            const upgradeHeader = request.headers.get('Upgrade');
+            
+            if (!upgradeHeader || upgradeHeader !== 'websocket') {
+                
+                const url = new URL(request.url);
+                const searchParams = new URLSearchParams(url.search);
+                const host = request.headers.get('Host');
+                const client = searchParams.get('app');
 
-	// @ts-ignore
+                switch (url.pathname) {
+
+                    case '/cf':
+                        return new Response(JSON.stringify(request.cf, null, 4), {
+                            status: 200,
+                            headers: {
+                                'Content-Type': 'application/json;charset=utf-8',
+                            },
+                        });
+                        
+                    case `/sub/${userID}`:
+
+                        if (client === 'sfa') {
+                            const BestPingSFA = await getSingboxConfig(env, host);
+                            return new Response(`${JSON.stringify(BestPingSFA, null, 4)}`, { status: 200 });                            
+                        }
+                        const normalConfigs = await getNormalConfigs(env, host, client);
+                        return new Response(normalConfigs, { status: 200 });                        
+
+                    case `/fragsub/${userID}`:
+
+                        let fragConfigs = await getFragmentConfigs(env, host, 'v2ray');
+                        fragConfigs = fragConfigs.map(config => config.config);
+
+                        return new Response(`${JSON.stringify(fragConfigs, null, 4)}`, { status: 200 });
+
+                    case '/panel':
+
+                        if (typeof env.bpb !== 'object') {
+                            const errorPage = renderErrorPage('دیتاست کیوی را درست نیست!', null, true);
+                            return new Response(errorPage, { status: 200, headers: {'Content-Type': 'text/html'}});
+                        }
+
+                        let isAuth = await Authenticate(request, env); 
+                        
+                        if (request.method === 'POST') {
+                            
+                            if (!isAuth) return new Response('Unauthorized', { status: 401 });             
+                            const formData = await request.formData();
+                            await updateDataset(env, formData);
+
+                            return new Response('Success', { status: 200 });
+                        }
+                        
+                        if (!isAuth) return Response.redirect(`${url.origin}/login`, 302);
+                        if (! await env.bpb.get('proxySettings')) await updateDataset(env);
+                        let fragConfs = await getFragmentConfigs(env, host, 'nekoray');
+                        let homePage = await renderHomePage(request, env, host, fragConfs);
+
+                        return new Response(homePage, {
+                            status: 200,
+                            headers: {
+                                'Content-Type': 'text/html',
+                                'Access-Control-Allow-Origin': url.origin,
+                                'Access-Control-Allow-Methods': 'GET, POST',
+                                'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+                                'X-Content-Type-Options': 'nosniff',
+                                'X-Frame-Options': 'DENY',
+                                'Referrer-Policy': 'strict-origin-when-cross-origin'
+                            }
+                        });
+                                                      
+                    case '/login':
+
+                        if (typeof env.bpb !== 'object') {
+                            const errorPage = renderErrorPage('اطلاعات و دیتاست کیوی انجام نشده است', null, true);
+                            return new Response(errorPage, { status: 200, headers: {'Content-Type': 'text/html'}});
+                        }
+
+                        let loginAuth = await Authenticate(request, env);
+                        if (loginAuth) return Response.redirect(`${url.origin}/panel`, 302);
+
+                        let secretKey = await env.bpb.get('secretKey');
+                        const pwd = await env.bpb.get('pwd');
+                        if (!pwd) await env.bpb.put('pwd', 'root');
+
+                        if (!secretKey) {
+                            secretKey = generateSecretKey();
+                            await env.bpb.put('secretKey', secretKey);
+                        }
+
+                        if (request.method === 'POST') {
+                            const password = await request.text();
+                            const savedPass = await env.bpb.get('pwd');
+
+                            if (password === savedPass) {
+                                const jwtToken = generateJWTToken(secretKey, password);
+                                const cookieHeader = `jwtToken=${jwtToken}; HttpOnly; Secure; Max-Age=${7 * 24 * 60 * 60}; Path=/; SameSite=Strict`;
+                                
+                                return new Response('Success', {
+                                    status: 200,
+                                    headers: {
+                                      'Set-Cookie': cookieHeader,
+                                      'Content-Type': 'text/plain',
+                                    }
+                                });        
+                            } else {
+                                return new Response('Method Not Allowed', { status: 405 });
+                            }
+                        }
+                        
+                        const loginPage = await renderLoginPage();
+
+                        return new Response(loginPage, {
+                            status: 200,
+                            headers: {
+                                'Content-Type': 'text/html',
+                                'Access-Control-Allow-Origin': url.origin,
+                                'Access-Control-Allow-Methods': 'GET, POST',
+                                'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+                                'X-Content-Type-Options': 'nosniff',
+                                'X-Frame-Options': 'DENY',
+                                'Referrer-Policy': 'strict-origin-when-cross-origin'
+                            }
+                        });
+                    
+                    case '/logout':
+                                    
+                        return new Response('Success', {
+                            status: 200,
+                            headers: {
+                                'Set-Cookie': 'jwtToken=; Secure; SameSite=None; Expires=Thu, 01 Jan 1970 00:00:00 GMT',
+                                'Content-Type': 'text/plain'
+                            }
+                        });        
+
+                    case '/panel/password':
+
+                        let passAuth = await Authenticate(request, env);
+                        if (!passAuth) return new Response('Unauthorized!', { status: 401 });           
+                        const newPwd = await request.text();
+                        const oldPwd = await env.bpb.get('pwd');
+                        if (newPwd === oldPwd) return new Response('پس جدید را وارد کنید!', { status: 400 });
+                        await env.bpb.put('pwd', newPwd);
+
+                        return new Response('Success', {
+                            status: 200,
+                            headers: {
+                                'Set-Cookie': 'jwtToken=; Path=/; Secure; SameSite=None; Expires=Thu, 01 Jan 1970 00:00:00 GMT',
+                                'Content-Type': 'text/plain',
+                            }
+                        });
+
+                    default:
+                        // return new Response('Not found', { status: 404 });
+                        url.hostname = 'salam.u3jit-telecom.workers.dev/';
+                        url.protocol = 'https:'; //ITS normal CLAXPOINT
+                        request = new Request(url, request);
+                        return await fetch(request);
+                }
+            } else {
+                return await vlessOverWSHandler(request);
+            }
+        } catch (err) {
+            /** @type {Error} */ let e = err;
+            const errorPage = renderErrorPage('یه مشکلی پیش اومده!', e.message.toString(), false);
+            return new Response(errorPage, { status: 200, headers: {'Content-Type': 'text/html'}});
+        }
+      },
+
+      
+};
+
+/**
+ * Handles VLESS over WebSocket requests by creating a WebSocket pair, accepting the WebSocket connection, and processing the VLESS header.
+ * @param {import("@cloudflare/workers-types").Request} request The incoming request object.
+ * @returns {Promise<Response>} A Promise that resolves to a WebSocket response object.
+ */
+async function vlessOverWSHandler(request) {
 	const webSocketPair = new WebSocketPair();
 	const [client, webSocket] = Object.values(webSocketPair);
-
-	// 接受 WebSocket 连接
 	webSocket.accept();
 
 	let address = '';
 	let portWithRandomLog = '';
-	// 日志函数，用于记录连接信息
+	let currentDate = new Date();
 	const log = (/** @type {string} */ info, /** @type {string | undefined} */ event) => {
-		console.log(`[${address}:${portWithRandomLog}] ${info}`, event || '');
+		console.log(`[${currentDate} ${address}:${portWithRandomLog}] ${info}`, event || '');
 	};
-	// 获取早期数据头部，可能包含了一些初始化数据
 	const earlyDataHeader = request.headers.get('sec-websocket-protocol') || '';
 
-	// 创建一个可读的 WebSocket 流，用于接收客户端数据
 	const readableWebSocketStream = makeReadableWebSocketStream(webSocket, earlyDataHeader, log);
 
-	// 用于存储远程 Socket 的包装器
+	/** @type {{ value: import("@cloudflare/workers-types").Socket | null}}*/
 	let remoteSocketWapper = {
 		value: null,
 	};
-	// 标记是否为 DNS 查询
+	let udpStreamWrite = null;
 	let isDns = false;
 
-	// WebSocket 数据流向远程服务器的管道
+	// ws --> remote
 	readableWebSocketStream.pipeTo(new WritableStream({
 		async write(chunk, controller) {
-			if (isDns) {
-				// 如果是 DNS 查询，调用 DNS 处理函数
-				return await handleDNSQuery(chunk, webSocket, null, log);
+			if (isDns && udpStreamWrite) {
+				return udpStreamWrite(chunk);
 			}
 			if (remoteSocketWapper.value) {
-				// 如果已有远程 Socket，直接写入数据
 				const writer = remoteSocketWapper.value.writable.getWriter()
 				await writer.write(chunk);
 				writer.releaseLock();
 				return;
 			}
 
-			// 处理 维列斯 协议头部
 			const {
 				hasError,
 				message,
-				addressType,
 				portRemote = 443,
 				addressRemote = '',
 				rawDataIndex,
-				维列斯Version = new Uint8Array([0, 0]),
+				vlessVersion = new Uint8Array([0, 0]),
 				isUDP,
-			} = process维列斯Header(chunk, userID);
-			// 设置地址和端口信息，用于日志
+			} = processVlessHeader(chunk, userID);
 			address = addressRemote;
-			portWithRandomLog = `${portRemote}--${Math.random()} ${isUDP ? 'udp ' : 'tcp '} `;
+			portWithRandomLog = `${portRemote} ${isUDP ? 'udp' : 'tcp'} `;
 			if (hasError) {
-				// 如果有错误，抛出异常
-				throw new Error(message);
+				// controller.error(message);
+				throw new Error(message); // cf seems has bug, controller.error will not end stream
+				// webSocket.close(1000, message);
 				return;
 			}
-			// 如果是 UDP 且端口不是 DNS 端口（53），则关闭连接
-			if (isUDP) {
-				if (portRemote === 53) {
-					isDns = true;
-				} else {
-					throw new Error('UDP 代理仅对 DNS（53 端口）启用');
-					return;
-				}
+
+			// If UDP and not DNS port, close it
+			if (isUDP && portRemote !== 53) {
+				throw new Error('UDP proxy only enabled for DNS which is port 53');
+				// cf seems has bug, controller.error will not end stream
 			}
-			// 构建 维列斯 响应头部
-			const 维列斯ResponseHeader = new Uint8Array([维列斯Version[0], 0]);
-			// 获取实际的客户端数据
+
+			if (isUDP && portRemote === 53) {
+				isDns = true;
+			}
+
+			// ["version", "附加信息长度 N"]
+			const vlessResponseHeader = new Uint8Array([vlessVersion[0], 0]);
 			const rawClientData = chunk.slice(rawDataIndex);
 
+			// TODO: support udp here when cf runtime has udp support
 			if (isDns) {
-				// 如果是 DNS 查询，调用 DNS 处理函数
-				return handleDNSQuery(rawClientData, webSocket, 维列斯ResponseHeader, log);
+				const { write } = await handleUDPOutBound(webSocket, vlessResponseHeader, log);
+				udpStreamWrite = write;
+				udpStreamWrite(rawClientData);
+				return;
 			}
-			// 处理 TCP 出站连接
-			if (!banHosts.includes(addressRemote)) {
-				log(`处理 TCP 出站连接 ${addressRemote}:${portRemote}`);
-				handleTCPOutBound(remoteSocketWapper, addressType, addressRemote, portRemote, rawClientData, webSocket, 维列斯ResponseHeader, log);
-			} else {
-				throw new Error(`黑名单关闭 TCP 出站连接 ${addressRemote}:${portRemote}`);
-			}
+			handleTCPOutBound(request, remoteSocketWapper, addressRemote, portRemote, rawClientData, webSocket, vlessResponseHeader, log);
 		},
 		close() {
-			log(`readableWebSocketStream 已关闭`);
+			log(`readableWebSocketStream is close`);
 		},
 		abort(reason) {
-			log(`readableWebSocketStream 已中止`, JSON.stringify(reason));
+			log(`readableWebSocketStream is abort`, JSON.stringify(reason));
 		},
 	})).catch((err) => {
-		log('readableWebSocketStream 管道错误', err);
+		log('readableWebSocketStream pipeTo error', err);
 	});
 
-	// 返回一个 WebSocket 升级的响应
 	return new Response(null, {
 		status: 101,
-		// @ts-ignore
 		webSocket: client,
 	});
 }
 
-async function handleTCPOutBound(remoteSocket, addressType, addressRemote, portRemote, rawClientData, webSocket, 维列斯ResponseHeader, log,) {
-	async function useSocks5Pattern(address) {
-		if ( go2Socks5s.includes(atob('YWxsIGlu')) || go2Socks5s.includes(atob('Kg==')) ) return true;
-		return go2Socks5s.some(pattern => {
-			let regexPattern = pattern.replace(/\*/g, '.*');
-			let regex = new RegExp(`^${regexPattern}$`, 'i');
-			return regex.test(address);
-		});
-	}
+/**
+ * Handles outbound TCP connections.
+ *
+ * @param {any} remoteSocket 
+ * @param {string} addressRemote The remote address to connect to.
+ * @param {number} portRemote The remote port to connect to.
+ * @param {Uint8Array} rawClientData The raw client data to write.
+ * @param {import("@cloudflare/workers-types").WebSocket} webSocket The WebSocket to pass the remote socket to.
+ * @param {Uint8Array} vlessResponseHeader The VLESS response header.
+ * @param {function} log The logging function.
+ * @returns {Promise<void>} The remote socket.
+ */
+async function handleTCPOutBound(request, remoteSocket, addressRemote, portRemote, rawClientData, webSocket, vlessResponseHeader, log,) {
 
-	async function connectAndWrite(address, port, socks = false) {
-		log(`connected to ${address}:${port}`);
-		//if (/^(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?).){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/.test(address)) address = `${atob('d3d3Lg==')}${address}${atob('LmlwLjA5MDIyNy54eXo=')}`;
-		// 如果指定使用 SOCKS5 代理，则通过 SOCKS5 协议连接；否则直接连接
-		const tcpSocket = socks ? await socks5Connect(addressType, address, port, log)
-			: connect({
-				hostname: address,
-				port: port,
-			});
+	/**
+	 * Connects to a given address and port and writes data to the socket.
+	 * @param {string} address The address to connect to.
+	 * @param {number} port The port to connect to.
+	 * @returns {Promise<import("@cloudflare/workers-types").Socket>} A Promise that resolves to the connected socket.
+	 */
+	async function connectAndWrite(address, port) {
+		/** @type {import("@cloudflare/workers-types").Socket} */
+		const tcpSocket = connect({
+			hostname: address,
+			port: port,
+		});
 		remoteSocket.value = tcpSocket;
-		//log(`connected to ${address}:${port}`);
+		log(`connected to ${address}:${port}`);
 		const writer = tcpSocket.writable.getWriter();
-		// 首次写入，通常是 TLS 客户端 Hello 消息
-		await writer.write(rawClientData);
+		await writer.write(rawClientData); // first write, nomal is tls client hello
 		writer.releaseLock();
 		return tcpSocket;
 	}
 
 	/**
-	 * 重试函数：当 Cloudflare 的 TCP Socket 没有传入数据时，我们尝试重定向 IP
-	 * 这可能是因为某些网络问题导致的连接失败
+	 * Retries connecting to the remote address and port if the Cloudflare socket has no incoming data.
+	 * @returns {Promise<void>} A Promise that resolves when the retry is complete.
 	 */
 	async function retry() {
-		if (enableSocks) {
-			// 如果启用了 SOCKS5，通过 SOCKS5 代理重试连接
-			tcpSocket = await connectAndWrite(addressRemote, portRemote, true);
-		} else {
-			// 否则，尝试使用预设的代理 IP（如果有）或原始地址重试连接
-			if (!proxyIP || proxyIP == '') {
-				proxyIP = atob(`UFJPWFlJUC50cDEuZnh4ay5kZWR5bi5pbw==`);
-			} else if (proxyIP.includes(']:')) {
-				portRemote = proxyIP.split(']:')[1] || portRemote;
-				proxyIP = proxyIP.split(']:')[0] || proxyIP;
-			} else if (proxyIP.split(':').length === 2) {
-				portRemote = proxyIP.split(':')[1] || portRemote;
-				proxyIP = proxyIP.split(':')[0] || proxyIP;
-			}
-			if (proxyIP.includes('.tp')) portRemote = proxyIP.split('.tp')[1].split('.')[0] || portRemote;
-			tcpSocket = await connectAndWrite(proxyIP || addressRemote, portRemote);
-		}
-		// 无论重试是否成功，都要关闭 WebSocket（可能是为了重新建立连接）
+        const { pathname } = new URL(request.url);
+        let panelProxyIP = pathname.split('/')[2];
+        panelProxyIP = panelProxyIP ? atob(panelProxyIP) : undefined;
+		const tcpSocket = await connectAndWrite(panelProxyIP || proxyIP || addressRemote, portRemote);
 		tcpSocket.closed.catch(error => {
 			console.log('retry tcpSocket closed error', error);
 		}).finally(() => {
 			safeCloseWebSocket(webSocket);
 		})
-		// 建立从远程 Socket 到 WebSocket 的数据流
-		remoteSocketToWS(tcpSocket, webSocket, 维列斯ResponseHeader, null, log);
+		remoteSocketToWS(tcpSocket, webSocket, vlessResponseHeader, null, log);
 	}
 
-	let useSocks = false;
-	if (go2Socks5s.length > 0 && enableSocks ) useSocks = await useSocks5Pattern(addressRemote);
-	// 首次尝试连接远程服务器
-	let tcpSocket = await connectAndWrite(addressRemote, portRemote, useSocks);
+	const tcpSocket = await connectAndWrite(addressRemote, portRemote);
 
-	// 当远程 Socket 就绪时，将其传递给 WebSocket
-	// 建立从远程服务器到 WebSocket 的数据流，用于将远程服务器的响应发送回客户端
-	// 如果连接失败或无数据，retry 函数将被调用进行重试
-	remoteSocketToWS(tcpSocket, webSocket, 维列斯ResponseHeader, retry, log);
+	// when remoteSocket is ready, pass to websocket
+	// remote--> ws
+	remoteSocketToWS(tcpSocket, webSocket, vlessResponseHeader, retry, log);
 }
 
+/**
+ * Creates a readable stream from a WebSocket server, allowing for data to be read from the WebSocket.
+ * @param {import("@cloudflare/workers-types").WebSocket} webSocketServer The WebSocket server to create the readable stream from.
+ * @param {string} earlyDataHeader The header containing early data for WebSocket 0-RTT.
+ * @param {(info: string)=> void} log The logging function.
+ * @returns {ReadableStream} A readable stream that can be used to read data from the WebSocket.
+ */
 function makeReadableWebSocketStream(webSocketServer, earlyDataHeader, log) {
-	// 标记可读流是否已被取消
 	let readableStreamCancel = false;
-
-	// 创建一个新的可读流
 	const stream = new ReadableStream({
-		// 当流开始时的初始化函数
 		start(controller) {
-			// 监听 WebSocket 的消息事件
 			webSocketServer.addEventListener('message', (event) => {
-				// 如果流已被取消，不再处理新消息
-				if (readableStreamCancel) {
-					return;
-				}
 				const message = event.data;
-				// 将消息加入流的队列中
 				controller.enqueue(message);
 			});
 
-			// 监听 WebSocket 的关闭事件
-			// 注意：这个事件意味着客户端关闭了客户端 -> 服务器的流
-			// 但是，服务器 -> 客户端的流仍然打开，直到在服务器端调用 close()
-			// WebSocket 协议要求在每个方向上都要发送单独的关闭消息，以完全关闭 Socket
 			webSocketServer.addEventListener('close', () => {
-				// 客户端发送了关闭信号，需要关闭服务器端
 				safeCloseWebSocket(webSocketServer);
-				// 如果流未被取消，则关闭控制器
-				if (readableStreamCancel) {
-					return;
-				}
 				controller.close();
 			});
 
-			// 监听 WebSocket 的错误事件
 			webSocketServer.addEventListener('error', (err) => {
-				log('WebSocket 服务器发生错误');
-				// 将错误传递给控制器
+				log('webSocketServer has error');
 				controller.error(err);
 			});
-
-			// 处理 WebSocket 0-RTT（零往返时间）的早期数据
-			// 0-RTT 允许在完全建立连接之前发送数据，提高了效率
 			const { earlyData, error } = base64ToArrayBuffer(earlyDataHeader);
 			if (error) {
-				// 如果解码早期数据时出错，将错误传递给控制器
 				controller.error(error);
 			} else if (earlyData) {
-				// 如果有早期数据，将其加入流的队列中
 				controller.enqueue(earlyData);
 			}
 		},
 
-		// 当使用者从流中拉取数据时调用
 		pull(controller) {
-			// 这里可以实现反压机制
-			// 如果 WebSocket 可以在流满时停止读取，我们就可以实现反压
-			// 参考：https://streams.spec.whatwg.org/#example-rs-push-backpressure
+			// if ws can stop read if stream is full, we can implement backpressure
+			// https://streams.spec.whatwg.org/#example-rs-push-backpressure
 		},
 
-		// 当流被取消时调用
 		cancel(reason) {
-			// 流被取消的几种情况：
-			// 1. 当管道的 WritableStream 有错误时，这个取消函数会被调用，所以在这里处理 WebSocket 服务器的关闭
-			// 2. 如果 ReadableStream 被取消，所有 controller.close/enqueue 都需要跳过
-			// 3. 但是经过测试，即使 ReadableStream 被取消，controller.error 仍然有效
-			if (readableStreamCancel) {
-				return;
-			}
-			log(`可读流被取消，原因是 ${reason}`);
+			log(`ReadableStream was canceled, due to ${reason}`)
 			readableStreamCancel = true;
-			// 安全地关闭 WebSocket
 			safeCloseWebSocket(webSocketServer);
 		}
 	});
@@ -504,120 +482,114 @@ function makeReadableWebSocketStream(webSocketServer, earlyDataHeader, log) {
 	return stream;
 }
 
-// https://xtls.github.io/development/protocols/维列斯.html
+// https://xtls.github.io/development/protocols/vless.html
 // https://github.com/zizifn/excalidraw-backup/blob/main/v2ray-protocol.excalidraw
 
+
 /**
- * 解析 维列斯 协议的头部数据
- * @param { ArrayBuffer} 维列斯Buffer 维列斯 协议的原始头部数据
- * @param {string} userID 用于验证的用户 ID
- * @returns {Object} 解析结果，包括是否有错误、错误信息、远程地址信息等
+ * Processes the VLESS header buffer and returns an object with the relevant information.
+ * @param {ArrayBuffer} vlessBuffer The VLESS header buffer to process.
+ * @param {string} userID The user ID to validate against the UUID in the VLESS header.
+ * @returns {{
+ *  hasError: boolean,
+ *  message?: string,
+ *  addressRemote?: string,
+ *  addressType?: number,
+ *  portRemote?: number,
+ *  rawDataIndex?: number,
+ *  vlessVersion?: Uint8Array,
+ *  isUDP?: boolean
+ * }} An object with the relevant information extracted from the VLESS header buffer.
  */
-function process维列斯Header(维列斯Buffer, userID) {
-	// 检查数据长度是否足够（至少需要 24 字节）
-	if (维列斯Buffer.byteLength < 24) {
+function processVlessHeader(vlessBuffer, userID) {
+	if (vlessBuffer.byteLength < 24) {
 		return {
 			hasError: true,
 			message: 'invalid data',
 		};
 	}
 
-	// 解析 维列斯 协议版本（第一个字节）
-	const version = new Uint8Array(维列斯Buffer.slice(0, 1));
-
+	const version = new Uint8Array(vlessBuffer.slice(0, 1));
 	let isValidUser = false;
 	let isUDP = false;
+	const slicedBuffer = new Uint8Array(vlessBuffer.slice(1, 17));
+	const slicedBufferString = stringify(slicedBuffer);
+	// check if userID is valid uuid or uuids split by , and contains userID in it otherwise return error message to console
+	const uuids = userID.includes(',') ? userID.split(",") : [userID];
+	// uuid_validator(hostName, slicedBufferString);
 
-	// 验证用户 ID（接下来的 16 个字节）
-	function isUserIDValid(userID, userIDLow, buffer) {
-		const userIDArray = new Uint8Array(buffer.slice(1, 17));
-		const userIDString = stringify(userIDArray);
-		return userIDString === userID || userIDString === userIDLow;
-	}
 
-	// 使用函数验证
-	isValidUser = isUserIDValid(userID, userIDLow, 维列斯Buffer);
+	// isValidUser = uuids.some(userUuid => slicedBufferString === userUuid.trim());
+	isValidUser = uuids.some(userUuid => slicedBufferString === userUuid.trim()) || uuids.length === 1 && slicedBufferString === uuids[0].trim();
 
-	// 如果用户 ID 无效，返回错误
+	console.log(`userID: ${slicedBufferString}`);
+
 	if (!isValidUser) {
 		return {
 			hasError: true,
-			message: `invalid user ${(new Uint8Array(维列斯Buffer.slice(1, 17)))}`,
+			message: 'یوزر اشتباه!',
 		};
 	}
 
-	// 获取附加选项的长度（第 17 个字节）
-	const optLength = new Uint8Array(维列斯Buffer.slice(17, 18))[0];
-	// 暂时跳过附加选项
+	const optLength = new Uint8Array(vlessBuffer.slice(17, 18))[0];
+	//skip opt for now
 
-	// 解析命令（紧跟在选项之后的 1 个字节）
-	// 0x01: TCP, 0x02: UDP, 0x03: MUX（多路复用）
 	const command = new Uint8Array(
-		维列斯Buffer.slice(18 + optLength, 18 + optLength + 1)
+		vlessBuffer.slice(18 + optLength, 18 + optLength + 1)
 	)[0];
 
 	// 0x01 TCP
 	// 0x02 UDP
 	// 0x03 MUX
 	if (command === 1) {
-		// TCP 命令，不需特殊处理
+		isUDP = false;
 	} else if (command === 2) {
-		// UDP 命令
 		isUDP = true;
 	} else {
-		// 不支持的命令
 		return {
 			hasError: true,
 			message: `command ${command} is not support, command 01-tcp,02-udp,03-mux`,
 		};
 	}
-
-	// 解析远程端口（大端序，2 字节）
 	const portIndex = 18 + optLength + 1;
-	const portBuffer = 维列斯Buffer.slice(portIndex, portIndex + 2);
+	const portBuffer = vlessBuffer.slice(portIndex, portIndex + 2);
 	// port is big-Endian in raw data etc 80 == 0x005d
 	const portRemote = new DataView(portBuffer).getUint16(0);
 
-	// 解析地址类型和地址
 	let addressIndex = portIndex + 2;
 	const addressBuffer = new Uint8Array(
-		维列斯Buffer.slice(addressIndex, addressIndex + 1)
+		vlessBuffer.slice(addressIndex, addressIndex + 1)
 	);
 
-	// 地址类型：1-IPv4(4字节), 2-域名(可变长), 3-IPv6(16字节)
+	// 1--> ipv4  addressLength =4
+	// 2--> domain name addressLength=addressBuffer[1]
+	// 3--> ipv6  addressLength =16
 	const addressType = addressBuffer[0];
 	let addressLength = 0;
 	let addressValueIndex = addressIndex + 1;
 	let addressValue = '';
-
 	switch (addressType) {
 		case 1:
-			// IPv4 地址
 			addressLength = 4;
-			// 将 4 个字节转为点分十进制格式
 			addressValue = new Uint8Array(
-				维列斯Buffer.slice(addressValueIndex, addressValueIndex + addressLength)
+				vlessBuffer.slice(addressValueIndex, addressValueIndex + addressLength)
 			).join('.');
 			break;
 		case 2:
-			// 域名
-			// 第一个字节是域名长度
 			addressLength = new Uint8Array(
-				维列斯Buffer.slice(addressValueIndex, addressValueIndex + 1)
+				vlessBuffer.slice(addressValueIndex, addressValueIndex + 1)
 			)[0];
 			addressValueIndex += 1;
-			// 解码域名
 			addressValue = new TextDecoder().decode(
-				维列斯Buffer.slice(addressValueIndex, addressValueIndex + addressLength)
+				vlessBuffer.slice(addressValueIndex, addressValueIndex + addressLength)
 			);
 			break;
 		case 3:
-			// IPv6 地址
 			addressLength = 16;
 			const dataView = new DataView(
-				维列斯Buffer.slice(addressValueIndex, addressValueIndex + addressLength)
+				vlessBuffer.slice(addressValueIndex, addressValueIndex + addressLength)
 			);
-			// 每 2 字节构成 IPv6 地址的一部分
+			// 2001:0db8:85a3:0000:0000:8a2e:0370:7334
 			const ipv6 = [];
 			for (let i = 0; i < 8; i++) {
 				ipv6.push(dataView.getUint16(i * 2).toString(16));
@@ -626,14 +598,11 @@ function process维列斯Header(维列斯Buffer, userID) {
 			// seems no need add [] for ipv6
 			break;
 		default:
-			// 无效的地址类型
 			return {
 				hasError: true,
-				message: `invild addressType is ${addressType}`,
+				message: `invild  addressType is ${addressType}`,
 			};
 	}
-
-	// 确保地址不为空
 	if (!addressValue) {
 		return {
 			hasError: true,
@@ -641,57 +610,58 @@ function process维列斯Header(维列斯Buffer, userID) {
 		};
 	}
 
-	// 返回解析结果
 	return {
 		hasError: false,
-		addressRemote: addressValue,  // 解析后的远程地址
-		addressType,				 // 地址类型
-		portRemote,				 // 远程端口
-		rawDataIndex: addressValueIndex + addressLength,  // 原始数据的实际起始位置
-		维列斯Version: version,	  // 维列斯 协议版本
-		isUDP,					 // 是否是 UDP 请求
+		addressRemote: addressValue,
+		addressType,
+		portRemote,
+		rawDataIndex: addressValueIndex + addressLength,
+		vlessVersion: version,
+		isUDP,
 	};
 }
 
-async function remoteSocketToWS(remoteSocket, webSocket, 维列斯ResponseHeader, retry, log) {
-	// 将数据从远程服务器转发到 WebSocket
+
+/**
+ * Converts a remote socket to a WebSocket connection.
+ * @param {import("@cloudflare/workers-types").Socket} remoteSocket The remote socket to convert.
+ * @param {import("@cloudflare/workers-types").WebSocket} webSocket The WebSocket to connect to.
+ * @param {ArrayBuffer | null} vlessResponseHeader The VLESS response header.
+ * @param {(() => Promise<void>) | null} retry The function to retry the connection if it fails.
+ * @param {(info: string) => void} log The logging function.
+ * @returns {Promise<void>} A Promise that resolves when the conversion is complete.
+ */
+async function remoteSocketToWS(remoteSocket, webSocket, vlessResponseHeader, retry, log) {
+	// remote--> ws
 	let remoteChunkCount = 0;
 	let chunks = [];
 	/** @type {ArrayBuffer | null} */
-	let 维列斯Header = 维列斯ResponseHeader;
-	let hasIncomingData = false; // 检查远程 Socket 是否有传入数据
-
-	// 使用管道将远程 Socket 的可读流连接到一个可写流
+	let vlessHeader = vlessResponseHeader;
+	let hasIncomingData = false; // check if remoteSocket has incoming data
 	await remoteSocket.readable
 		.pipeTo(
 			new WritableStream({
 				start() {
-					// 初始化时不需要任何操作
 				},
 				/**
-				 * 处理每个数据块
-				 * @param {Uint8Array} chunk 数据块
-				 * @param {*} controller 控制器
+				 * 
+				 * @param {Uint8Array} chunk 
+				 * @param {*} controller 
 				 */
 				async write(chunk, controller) {
-					hasIncomingData = true; // 标记已收到数据
-					// remoteChunkCount++; // 用于流量控制，现在似乎不需要了
-
-					// 检查 WebSocket 是否处于开放状态
+					hasIncomingData = true;
+					remoteChunkCount++;
 					if (webSocket.readyState !== WS_READY_STATE_OPEN) {
 						controller.error(
 							'webSocket.readyState is not open, maybe close'
 						);
 					}
-
-					if (维列斯Header) {
-						// 如果有 维列斯 响应头部，将其与第一个数据块一起发送
-						webSocket.send(await new Blob([维列斯Header, chunk]).arrayBuffer());
-						维列斯Header = null; // 清空头部，之后不再发送
+					if (vlessHeader) {
+						webSocket.send(await new Blob([vlessHeader, chunk]).arrayBuffer());
+						vlessHeader = null;
 					} else {
-						// 直接发送数据块
-						// 以前这里有流量控制代码，限制大量数据的发送速率
-						// 但现在 Cloudflare 似乎已经修复了这个问题
+						// console.log(`remoteSocketToWS send chunk ${chunk.byteLength}`);
+						// seems no need rate limit this, CF seems fix this??..
 						// if (remoteChunkCount > 20000) {
 						// 	// cf one package is 4096 byte(4kb),  4096 * 20000 = 80M
 						// 	await delay(1);
@@ -700,1342 +670,2399 @@ async function remoteSocketToWS(remoteSocket, webSocket, 维列斯ResponseHeader
 					}
 				},
 				close() {
-					// 当远程连接的可读流关闭时
 					log(`remoteConnection!.readable is close with hasIncomingData is ${hasIncomingData}`);
-					// 不需要主动关闭 WebSocket，因为这可能导致 HTTP ERR_CONTENT_LENGTH_MISMATCH 问题
-					// 客户端无论如何都会发送关闭事件
-					// safeCloseWebSocket(webSocket);
+					// safeCloseWebSocket(webSocket); // no need server close websocket frist for some case will casue HTTP ERR_CONTENT_LENGTH_MISMATCH issue, client will send close event anyway.
 				},
 				abort(reason) {
-					// 当远程连接的可读流中断时
 					console.error(`remoteConnection!.readable abort`, reason);
 				},
 			})
 		)
 		.catch((error) => {
-			// 捕获并记录任何异常
 			console.error(
 				`remoteSocketToWS has exception `,
 				error.stack || error
 			);
-			// 发生错误时安全地关闭 WebSocket
 			safeCloseWebSocket(webSocket);
 		});
 
-	// 处理 Cloudflare 连接 Socket 的特殊错误情况
-	// 1. Socket.closed 将有错误
-	// 2. Socket.readable 将关闭，但没有任何数据
+	// seems is cf connect socket have error,
+	// 1. Socket.closed will have error
+	// 2. Socket.readable will be close without any data coming
 	if (hasIncomingData === false && retry) {
-		log(`retry`);
-		retry(); // 调用重试函数，尝试重新建立连接
+		log(`retry`)
+		retry();
 	}
 }
 
 /**
- * 将 Base64 编码的字符串转换为 ArrayBuffer
- * 
- * @param {string} base64Str Base64 编码的输入字符串
- * @returns {{ earlyData: ArrayBuffer | undefined, error: Error | null }} 返回解码后的 ArrayBuffer 或错误
+ * Decodes a base64 string into an ArrayBuffer.
+ * @param {string} base64Str The base64 string to decode.
+ * @returns {{earlyData: ArrayBuffer|null, error: Error|null}} An object containing the decoded ArrayBuffer or null if there was an error, and any error that occurred during decoding or null if there was no error.
  */
 function base64ToArrayBuffer(base64Str) {
-	// 如果输入为空，直接返回空结果
 	if (!base64Str) {
-		return { earlyData: undefined, error: null };
+		return { earlyData: null, error: null };
 	}
 	try {
-		// Go 语言使用了 URL 安全的 Base64 变体（RFC 4648）
-		// 这种变体使用 '-' 和 '_' 来代替标准 Base64 中的 '+' 和 '/'
-		// JavaScript 的 atob 函数不直接支持这种变体，所以我们需要先转换
+		// go use modified Base64 for URL rfc4648 which js atob not support
 		base64Str = base64Str.replace(/-/g, '+').replace(/_/g, '/');
-		
-		// 使用 atob 函数解码 Base64 字符串
-		// atob 将 Base64 编码的 ASCII 字符串转换为原始的二进制字符串
 		const decode = atob(base64Str);
-		
-		// 将二进制字符串转换为 Uint8Array
-		// 这是通过遍历字符串中的每个字符并获取其 Unicode 编码值（0-255）来完成的
 		const arryBuffer = Uint8Array.from(decode, (c) => c.charCodeAt(0));
-		
-		// 返回 Uint8Array 的底层 ArrayBuffer
-		// 这是实际的二进制数据，可以用于网络传输或其他二进制操作
 		return { earlyData: arryBuffer.buffer, error: null };
 	} catch (error) {
-		// 如果在任何步骤中出现错误（如非法 Base64 字符），则返回错误
-		return { earlyData: undefined, error };
+		return { earlyData: null, error };
 	}
 }
 
 /**
- * 这不是真正的 UUID 验证，而是一个简化的版本
- * @param {string} uuid 要验证的 UUID 字符串
- * @returns {boolean} 如果字符串匹配 UUID 格式则返回 true，否则返回 false
+ * Checks if a given string is a valid UUID.
+ * Note: This is not a real UUID validation.
+ * @param {string} uuid The string to validate as a UUID.
+ * @returns {boolean} True if the string is a valid UUID, false otherwise.
  */
 function isValidUUID(uuid) {
-	// 定义一个正则表达式来匹配 UUID 格式
 	const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[4][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
-	
-	// 使用正则表达式测试 UUID 字符串
 	return uuidRegex.test(uuid);
 }
 
-// WebSocket 的两个重要状态常量
-const WS_READY_STATE_OPEN = 1;	 // WebSocket 处于开放状态，可以发送和接收消息
-const WS_READY_STATE_CLOSING = 2;  // WebSocket 正在关闭过程中
-
+const WS_READY_STATE_OPEN = 1;
+const WS_READY_STATE_CLOSING = 2;
+/**
+ * Closes a WebSocket connection safely without throwing exceptions.
+ * @param {import("@cloudflare/workers-types").WebSocket} socket The WebSocket connection to close.
+ */
 function safeCloseWebSocket(socket) {
 	try {
-		// 只有在 WebSocket 处于开放或正在关闭状态时才调用 close()
-		// 这避免了在已关闭或连接中的 WebSocket 上调用 close()
 		if (socket.readyState === WS_READY_STATE_OPEN || socket.readyState === WS_READY_STATE_CLOSING) {
 			socket.close();
 		}
 	} catch (error) {
-		// 记录任何可能发生的错误，虽然按照规范不应该有错误
 		console.error('safeCloseWebSocket error', error);
 	}
 }
 
-// 预计算 0-255 每个字节的十六进制表示
 const byteToHex = [];
+
 for (let i = 0; i < 256; ++i) {
-	// (i + 256).toString(16) 确保总是得到两位数的十六进制
-	// .slice(1) 删除前导的 "1"，只保留两位十六进制数
 	byteToHex.push((i + 256).toString(16).slice(1));
 }
 
-/**
- * 快速地将字节数组转换为 UUID 字符串，不进行有效性检查
- * 这是一个底层函数，直接操作字节，不做任何验证
- * @param {Uint8Array} arr 包含 UUID 字节的数组
- * @param {number} offset 数组中 UUID 开始的位置，默认为 0
- * @returns {string} UUID 字符串
- */
 function unsafeStringify(arr, offset = 0) {
-	// 直接从查找表中获取每个字节的十六进制表示，并拼接成 UUID 格式
-	// 8-4-4-4-12 的分组是通过精心放置的连字符 "-" 实现的
-	// toLowerCase() 确保整个 UUID 是小写的
-	return (byteToHex[arr[offset + 0]] + byteToHex[arr[offset + 1]] + byteToHex[arr[offset + 2]] + byteToHex[arr[offset + 3]] + "-" +
-		byteToHex[arr[offset + 4]] + byteToHex[arr[offset + 5]] + "-" +
-		byteToHex[arr[offset + 6]] + byteToHex[arr[offset + 7]] + "-" +
-		byteToHex[arr[offset + 8]] + byteToHex[arr[offset + 9]] + "-" +
-		byteToHex[arr[offset + 10]] + byteToHex[arr[offset + 11]] + byteToHex[arr[offset + 12]] +
-		byteToHex[arr[offset + 13]] + byteToHex[arr[offset + 14]] + byteToHex[arr[offset + 15]]).toLowerCase();
+	return (byteToHex[arr[offset + 0]] + byteToHex[arr[offset + 1]] + byteToHex[arr[offset + 2]] + byteToHex[arr[offset + 3]] + "-" + byteToHex[arr[offset + 4]] + byteToHex[arr[offset + 5]] + "-" + byteToHex[arr[offset + 6]] + byteToHex[arr[offset + 7]] + "-" + byteToHex[arr[offset + 8]] + byteToHex[arr[offset + 9]] + "-" + byteToHex[arr[offset + 10]] + byteToHex[arr[offset + 11]] + byteToHex[arr[offset + 12]] + byteToHex[arr[offset + 13]] + byteToHex[arr[offset + 14]] + byteToHex[arr[offset + 15]]).toLowerCase();
 }
 
-/**
- * 将字节数组转换为 UUID 字符串，并验证其有效性
- * 这是一个安全的函数，它确保返回的 UUID 格式正确
- * @param {Uint8Array} arr 包含 UUID 字节的数组
- * @param {number} offset 数组中 UUID 开始的位置，默认为 0
- * @returns {string} 有效的 UUID 字符串
- * @throws {TypeError} 如果生成的 UUID 字符串无效
- */
 function stringify(arr, offset = 0) {
-	// 使用不安全的函数快速生成 UUID 字符串
 	const uuid = unsafeStringify(arr, offset);
-	// 验证生成的 UUID 是否有效
 	if (!isValidUUID(uuid)) {
-		// 原：throw TypeError("Stringified UUID is invalid");
-		throw TypeError(`生成的 UUID 不符合规范 ${uuid}`); 
-		//uuid = userID;
+		throw TypeError("Stringified UUID is invalid");
 	}
 	return uuid;
 }
 
+
 /**
- * 处理 DNS 查询的函数
- * @param {ArrayBuffer} udpChunk - 客户端发送的 DNS 查询数据
- * @param {ArrayBuffer} 维列斯ResponseHeader - 维列斯 协议的响应头部数据
- * @param {(string)=> void} log - 日志记录函数
+ * Handles outbound UDP traffic by transforming the data into DNS queries and sending them over a WebSocket connection.
+ * @param {import("@cloudflare/workers-types").WebSocket} webSocket The WebSocket connection to send the DNS queries over.
+ * @param {ArrayBuffer} vlessResponseHeader The VLESS response header.
+ * @param {(string) => void} log The logging function.
+ * @returns {{write: (chunk: Uint8Array) => void}} An object with a write method that accepts a Uint8Array chunk to write to the transform stream.
  */
-async function handleDNSQuery(udpChunk, webSocket, 维列斯ResponseHeader, log) {
-	// 无论客户端发送到哪个 DNS 服务器，我们总是使用硬编码的服务器
-	// 因为有些 DNS 服务器不支持 DNS over TCP
-	try {
-		// 选用 Google 的 DNS 服务器（注：后续可能会改为 Cloudflare 的 1.1.1.1）
-		const dnsServer = '8.8.4.4'; // 在 Cloudflare 修复连接自身 IP 的 bug 后，将改为 1.1.1.1
-		const dnsPort = 53; // DNS 服务的标准端口
+async function handleUDPOutBound(webSocket, vlessResponseHeader, log) {
 
-		let 维列斯Header = 维列斯ResponseHeader; // 保存 维列斯 响应头部，用于后续发送
+	let isVlessHeaderSent = false;
+	const transformStream = new TransformStream({
+		start(controller) {
 
-		// 与指定的 DNS 服务器建立 TCP 连接
-		const tcpSocket = connect({
-			hostname: dnsServer,
-			port: dnsPort,
-		});
+		},
+		transform(chunk, controller) {
+			// udp message 2 byte is the the length of udp data
+			// TODO: this should have bug, beacsue maybe udp chunk can be in two websocket message
+			for (let index = 0; index < chunk.byteLength;) {
+				const lengthBuffer = chunk.slice(index, index + 2);
+				const udpPakcetLength = new DataView(lengthBuffer).getUint16(0);
+				const udpData = new Uint8Array(
+					chunk.slice(index + 2, index + 2 + udpPakcetLength)
+				);
+				index = index + 2 + udpPakcetLength;
+				controller.enqueue(udpData);
+			}
+		},
+		flush(controller) {
+		}
+	});
 
-		log(`连接到 ${dnsServer}:${dnsPort}`); // 记录连接信息
-		const writer = tcpSocket.writable.getWriter();
-		await writer.write(udpChunk); // 将客户端的 DNS 查询数据发送给 DNS 服务器
-		writer.releaseLock(); // 释放写入器，允许其他部分使用
-
-		// 将从 DNS 服务器接收到的响应数据通过 WebSocket 发送回客户端
-		await tcpSocket.readable.pipeTo(new WritableStream({
-			async write(chunk) {
-				if (webSocket.readyState === WS_READY_STATE_OPEN) {
-					if (维列斯Header) {
-						// 如果有 维列斯 头部，则将其与 DNS 响应数据合并后发送
-						webSocket.send(await new Blob([维列斯Header, chunk]).arrayBuffer());
-						维列斯Header = null; // 头部只发送一次，之后置为 null
-					} else {
-						// 否则直接发送 DNS 响应数据
-						webSocket.send(chunk);
-					}
+	// only handle dns udp for now
+	transformStream.readable.pipeTo(new WritableStream({
+		async write(chunk) {
+			const resp = await fetch(dohURL, // dns server url
+				{
+					method: 'POST',
+					headers: {
+						'content-type': 'application/dns-message',
+					},
+					body: chunk,
+				})
+			const dnsQueryResult = await resp.arrayBuffer();
+			const udpSize = dnsQueryResult.byteLength;
+			// console.log([...new Uint8Array(dnsQueryResult)].map((x) => x.toString(16)));
+			const udpSizeBuffer = new Uint8Array([(udpSize >> 8) & 0xff, udpSize & 0xff]);
+			if (webSocket.readyState === WS_READY_STATE_OPEN) {
+				log(`doh success and dns message length is ${udpSize}`);
+				if (isVlessHeaderSent) {
+					webSocket.send(await new Blob([udpSizeBuffer, dnsQueryResult]).arrayBuffer());
+				} else {
+					webSocket.send(await new Blob([vlessResponseHeader, udpSizeBuffer, dnsQueryResult]).arrayBuffer());
+					isVlessHeaderSent = true;
 				}
-			},
-			close() {
-				log(`DNS 服务器(${dnsServer}) TCP 连接已关闭`); // 记录连接关闭信息
-			},
-			abort(reason) {
-				console.error(`DNS 服务器(${dnsServer}) TCP 连接异常中断`, reason); // 记录异常中断原因
-			},
-		}));
-	} catch (error) {
-		// 捕获并记录任何可能发生的错误
-		console.error(
-			`handleDNSQuery 函数发生异常，错误信息: ${error.message}`
-		);
-	}
-}
-
-/**
- * 建立 SOCKS5 代理连接
- * @param {number} addressType 目标地址类型（1: IPv4, 2: 域名, 3: IPv6）
- * @param {string} addressRemote 目标地址（可以是 IP 或域名）
- * @param {number} portRemote 目标端口
- * @param {function} log 日志记录函数
- */
-async function socks5Connect(addressType, addressRemote, portRemote, log) {
-	const { username, password, hostname, port } = parsedSocks5Address;
-	// 连接到 SOCKS5 代理服务器
-	const socket = connect({
-		hostname, // SOCKS5 服务器的主机名
-		port,	// SOCKS5 服务器的端口
+			}
+		}
+	})).catch((error) => {
+		log('dns udp has error' + error)
 	});
 
-	// 请求头格式（Worker -> SOCKS5 服务器）:
-	// +----+----------+----------+
-	// |VER | NMETHODS | METHODS  |
-	// +----+----------+----------+
-	// | 1  |	1	 | 1 to 255 |
-	// +----+----------+----------+
+	const writer = transformStream.writable.getWriter();
 
-	// https://en.wikipedia.org/wiki/SOCKS#SOCKS5
-	// METHODS 字段的含义:
-	// 0x00 不需要认证
-	// 0x02 用户名/密码认证 https://datatracker.ietf.org/doc/html/rfc1929
-	const socksGreeting = new Uint8Array([5, 2, 0, 2]);
-	// 5: SOCKS5 版本号, 2: 支持的认证方法数, 0和2: 两种认证方法（无认证和用户名/密码）
-
-	const writer = socket.writable.getWriter();
-
-	await writer.write(socksGreeting);
-	log('已发送 SOCKS5 问候消息');
-
-	const reader = socket.readable.getReader();
-	const encoder = new TextEncoder();
-	let res = (await reader.read()).value;
-	// 响应格式（SOCKS5 服务器 -> Worker）:
-	// +----+--------+
-	// |VER | METHOD |
-	// +----+--------+
-	// | 1  |   1	|
-	// +----+--------+
-	if (res[0] !== 0x05) {
-		log(`SOCKS5 服务器版本错误: 收到 ${res[0]}，期望是 5`);
-		return;
-	}
-	if (res[1] === 0xff) {
-		log("服务器不接受任何认证方法");
-		return;
-	}
-
-	// 如果返回 0x0502，表示需要用户名/密码认证
-	if (res[1] === 0x02) {
-		log("SOCKS5 服务器需要认证");
-		if (!username || !password) {
-			log("请提供用户名和密码");
-			return;
-		}
-		// 认证请求格式:
-		// +----+------+----------+------+----------+
-		// |VER | ULEN |  UNAME   | PLEN |  PASSWD  |
-		// +----+------+----------+------+----------+
-		// | 1  |  1   | 1 to 255 |  1   | 1 to 255 |
-		// +----+------+----------+------+----------+
-		const authRequest = new Uint8Array([
-			1,				   // 认证子协议版本
-			username.length,	// 用户名长度
-			...encoder.encode(username), // 用户名
-			password.length,	// 密码长度
-			...encoder.encode(password)  // 密码
-		]);
-		await writer.write(authRequest);
-		res = (await reader.read()).value;
-		// 期望返回 0x0100 表示认证成功
-		if (res[0] !== 0x01 || res[1] !== 0x00) {
-			log("SOCKS5 服务器认证失败");
-			return;
-		}
-	}
-
-	// 请求数据格式（Worker -> SOCKS5 服务器）:
-	// +----+-----+-------+------+----------+----------+
-	// |VER | CMD |  RSV  | ATYP | DST.ADDR | DST.PORT |
-	// +----+-----+-------+------+----------+----------+
-	// | 1  |  1  | X'00' |  1   | Variable |	2	 |
-	// +----+-----+-------+------+----------+----------+
-	// ATYP: 地址类型
-	// 0x01: IPv4 地址
-	// 0x03: 域名
-	// 0x04: IPv6 地址
-	// DST.ADDR: 目标地址
-	// DST.PORT: 目标端口（网络字节序）
-
-	// addressType
-	// 1 --> IPv4  地址长度 = 4
-	// 2 --> 域名
-	// 3 --> IPv6  地址长度 = 16
-	let DSTADDR;	// DSTADDR = ATYP + DST.ADDR
-	switch (addressType) {
-		case 1: // IPv4
-			DSTADDR = new Uint8Array(
-				[1, ...addressRemote.split('.').map(Number)]
-			);
-			break;
-		case 2: // 域名
-			DSTADDR = new Uint8Array(
-				[3, addressRemote.length, ...encoder.encode(addressRemote)]
-			);
-			break;
-		case 3: // IPv6
-			DSTADDR = new Uint8Array(
-				[4, ...addressRemote.split(':').flatMap(x => [parseInt(x.slice(0, 2), 16), parseInt(x.slice(2), 16)])]
-			);
-			break;
-		default:
-			log(`无效的地址类型: ${addressType}`);
-			return;
-	}
-	const socksRequest = new Uint8Array([5, 1, 0, ...DSTADDR, portRemote >> 8, portRemote & 0xff]);
-	// 5: SOCKS5版本, 1: 表示CONNECT请求, 0: 保留字段
-	// ...DSTADDR: 目标地址, portRemote >> 8 和 & 0xff: 将端口转为网络字节序
-	await writer.write(socksRequest);
-	log('已发送 SOCKS5 请求');
-
-	res = (await reader.read()).value;
-	// 响应格式（SOCKS5 服务器 -> Worker）:
-	//  +----+-----+-------+------+----------+----------+
-	// |VER | REP |  RSV  | ATYP | BND.ADDR | BND.PORT |
-	// +----+-----+-------+------+----------+----------+
-	// | 1  |  1  | X'00' |  1   | Variable |	2	 |
-	// +----+-----+-------+------+----------+----------+
-	if (res[1] === 0x00) {
-		log("SOCKS5 连接已建立");
-	} else {
-		log("SOCKS5 连接建立失败");
-		return;
-	}
-	writer.releaseLock();
-	reader.releaseLock();
-	return socket;
-}
-
-/**
- * SOCKS5 代理地址解析器
- * 此函数用于解析 SOCKS5 代理地址字符串，提取出用户名、密码、主机名和端口号
- * 
- * @param {string} address SOCKS5 代理地址，格式可以是：
- *   - "username:password@hostname:port" （带认证）
- *   - "hostname:port" （不需认证）
- *   - "username:password@[ipv6]:port" （IPv6 地址需要用方括号括起来）
- */
-function socks5AddressParser(address) {
-	// 使用 "@" 分割地址，分为认证部分和服务器地址部分
-	// reverse() 是为了处理没有认证信息的情况，确保 latter 总是包含服务器地址
-	let [latter, former] = address.split("@").reverse();
-	let username, password, hostname, port;
-
-	// 如果存在 former 部分，说明提供了认证信息
-	if (former) {
-		const formers = former.split(":");
-		if (formers.length !== 2) {
-			throw new Error('无效的 SOCKS 地址格式：认证部分必须是 "username:password" 的形式');
-		}
-		[username, password] = formers;
-	}
-
-	// 解析服务器地址部分
-	const latters = latter.split(":");
-	// 从末尾提取端口号（因为 IPv6 地址中也包含冒号）
-	port = Number(latters.pop());
-	if (isNaN(port)) {
-		throw new Error('无效的 SOCKS 地址格式：端口号必须是数字');
-	}
-
-	// 剩余部分就是主机名（可能是域名、IPv4 或 IPv6 地址）
-	hostname = latters.join(":");
-
-	// 处理 IPv6 地址的特殊情况
-	// IPv6 地址包含多个冒号，所以必须用方括号括起来，如 [2001:db8::1]
-	const regex = /^\[.*\]$/;
-	if (hostname.includes(":") && !regex.test(hostname)) {
-		throw new Error('无效的 SOCKS 地址格式：IPv6 地址必须用方括号括起来，如 [2001:db8::1]');
-	}
-
-	//if (/^(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?).){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/.test(hostname)) hostname = `${atob('d3d3Lg==')}${hostname}${atob('LmlwLjA5MDIyNy54eXo=')}`;
-	// 返回解析后的结果
 	return {
-		username,  // 用户名，如果没有则为 undefined
-		password,  // 密码，如果没有则为 undefined
-		hostname,  // 主机名，可以是域名、IPv4 或 IPv6 地址
-		port,	 // 端口号，已转换为数字类型
-	}
+		/**
+		 * 
+		 * @param {Uint8Array} chunk 
+		 */
+		write(chunk) {
+			writer.write(chunk);
+		}
+	};
 }
 
 /**
- * 恢复被伪装的信息
- * 这个函数用于将内容中的假用户ID和假主机名替换回真实的值
- * 
- * @param {string} content 需要处理的内容
- * @param {string} userID 真实的用户ID
- * @param {string} hostName 真实的主机名
- * @param {boolean} isBase64 内容是否是Base64编码的
- * @returns {string} 恢复真实信息后的内容
- */
-function 恢复伪装信息(content, userID, hostName, isBase64) {
-	if (isBase64) content = atob(content);  // 如果内容是Base64编码的，先解码
-	
-	// 使用正则表达式全局替换（'g'标志）
-	// 将所有出现的假用户ID和假主机名替换为真实的值
-	content = content.replace(new RegExp(fakeUserID, 'g'), userID)
-				   .replace(new RegExp(fakeHostName, 'g'), hostName);
-	
-	if (isBase64) content = btoa(content);  // 如果原内容是Base64编码的，处理完后再次编码
-	
-	return content;
-}
-
-/**
- * 双重MD5哈希函数
- * 这个函数对输入文本进行两次MD5哈希，增强安全性
- * 第二次哈希使用第一次哈希结果的一部分作为输入
- * 
- * @param {string} 文本 要哈希的文本
- * @returns {Promise<string>} 双重哈希后的小写十六进制字符串
- */
-async function 双重哈希(文本) {
-	const 编码器 = new TextEncoder();
-
-	const 第一次哈希 = await crypto.subtle.digest('MD5', 编码器.encode(文本));
-	const 第一次哈希数组 = Array.from(new Uint8Array(第一次哈希));
-	const 第一次十六进制 = 第一次哈希数组.map(字节 => 字节.toString(16).padStart(2, '0')).join('');
-
-	const 第二次哈希 = await crypto.subtle.digest('MD5', 编码器.encode(第一次十六进制.slice(7, 27)));
-	const 第二次哈希数组 = Array.from(new Uint8Array(第二次哈希));
-	const 第二次十六进制 = 第二次哈希数组.map(字节 => 字节.toString(16).padStart(2, '0')).join('');
-  
-	return 第二次十六进制.toLowerCase();
-}
-
-async function 代理URL(代理网址, 目标网址) {
-	const 网址列表 = await 整理(代理网址);
-	const 完整网址 = 网址列表[Math.floor(Math.random() * 网址列表.length)];
-
-	// 解析目标 URL
-	let 解析后的网址 = new URL(完整网址);
-	console.log(解析后的网址);
-	// 提取并可能修改 URL 组件
-	let 协议 = 解析后的网址.protocol.slice(0, -1) || 'https';
-	let 主机名 = 解析后的网址.hostname;
-	let 路径名 = 解析后的网址.pathname;
-	let 查询参数 = 解析后的网址.search;
-
-	// 处理路径名
-	if (路径名.charAt(路径名.length - 1) == '/') {
-		路径名 = 路径名.slice(0, -1);
-	}
-	路径名 += 目标网址.pathname;
-
-	// 构建新的 URL
-	let 新网址 = `${协议}://${主机名}${路径名}${查询参数}`;
-
-	// 反向代理请求
-	let 响应 = await fetch(新网址);
-
-	// 创建新的响应
-	let 新响应 = new Response(响应.body, {
-		status: 响应.status,
-		statusText: 响应.statusText,
-		headers: 响应.headers
-	});
-
-	// 添加自定义头部，包含 URL 信息
-	//新响应.headers.set('X-Proxied-By', 'Cloudflare Worker');
-	//新响应.headers.set('X-Original-URL', 完整网址);
-	新响应.headers.set('X-New-URL', 新网址);
-
-	return 新响应;
-}
-
-const 啥啥啥_写的这是啥啊 = atob('ZG14bGMzTT0=');
-function 配置信息(UUID, 域名地址) {
-	const 协议类型 = atob(啥啥啥_写的这是啥啊);
-	
-	const 别名 = FileName;
-	let 地址 = 域名地址;
-	let 端口 = 443;
-
-	const 用户ID = UUID;
-	const 加密方式 = 'none';
-	
-	const 传输层协议 = 'ws';
-	const 伪装域名 = 域名地址;
-	const 路径 = path;
-	
-	let 传输层安全 = ['tls',true];
-	const SNI = 域名地址;
-	const 指纹 = 'randomized';
-
-	if (域名地址.includes('.workers.dev')){
-		地址 = atob('dmlzYS5jbg==');
-		端口 = 80 ;
-		传输层安全 = ['',false];
-	}
-
-	const 威图瑞 = `${协议类型}://${用户ID}@${地址}:${端口}\u003f\u0065\u006e\u0063\u0072\u0079`+'p'+`${atob('dGlvbj0=') + 加密方式}\u0026\u0073\u0065\u0063\u0075\u0072\u0069\u0074\u0079\u003d${传输层安全[0]}&sni=${SNI}&fp=${指纹}&type=${传输层协议}&host=${伪装域名}&path=${encodeURIComponent(路径)}#${encodeURIComponent(别名)}`; 
-	const 猫猫猫 = `- {name: ${FileName}, server: ${地址}, port: ${端口}, type: ${协议类型}, uuid: ${用户ID}, tls: ${传输层安全[1]}, alpn: [h3], udp: false, sni: ${SNI}, tfo: false, skip-cert-verify: true, servername: ${伪装域名}, client-fingerprint: ${指纹}, network: ${传输层协议}, ws-opts: {path: "${路径}", headers: {${伪装域名}}}}`;
-	return [威图瑞,猫猫猫];
-}
-
-let subParams = ['sub','base64','b64','clash','singbox','sb'];
-const cmad = decodeURIComponent(atob('dGVsZWdyYW0lMjAlRTQlQkElQTQlRTYlQjUlODElRTclQkUlQTQlMjAlRTYlOEElODAlRTYlOUMlQUYlRTUlQTQlQTclRTQlQkQlQUMlN0UlRTUlOUMlQTglRTclQkElQkYlRTUlOEYlOTElRTclODklOEMhJTNDYnIlM0UKJTNDYSUyMGhyZWYlM0QlMjdodHRwcyUzQSUyRiUyRnQubWUlMkZDTUxpdXNzc3MlMjclM0VodHRwcyUzQSUyRiUyRnQubWUlMkZDTUxpdXNzc3MlM0MlMkZhJTNFJTNDYnIlM0UKLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tJTNDYnIlM0UKZ2l0aHViJTIwJUU5JUExJUI5JUU3JTlCJUFFJUU1JTlDJUIwJUU1JTlEJTgwJTIwU3RhciFTdGFyIVN0YXIhISElM0NiciUzRQolM0NhJTIwaHJlZiUzRCUyN2h0dHBzJTNBJTJGJTJGZ2l0aHViLmNvbSUyRmNtbGl1JTJGZWRnZXR1bm5lbCUyNyUzRWh0dHBzJTNBJTJGJTJGZ2l0aHViLmNvbSUyRmNtbGl1JTJGZWRnZXR1bm5lbCUzQyUyRmElM0UlM0NiciUzRQotLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0lM0NiciUzRQolMjMlMjMlMjMlMjMlMjMlMjMlMjMlMjMlMjMlMjMlMjMlMjMlMjMlMjMlMjMlMjMlMjMlMjMlMjMlMjMlMjMlMjMlMjMlMjMlMjMlMjMlMjMlMjMlMjMlMjMlMjMlMjMlMjMlMjMlMjMlMjMlMjMlMjMlMjMlMjMlMjMlMjMlMjMlMjMlMjMlMjMlMjMlMjMlMjMlMjMlMjMlMjMlMjMlMjMlMjMlMjMlMjMlMjMlMjMlMjMlMjMlMjMlMjMlMjM='));
-/**
+ *
  * @param {string} userID
  * @param {string | null} hostName
- * @param {string} sub
- * @param {string} UA
- * @returns {Promise<string>}
+ * @returns {string}
  */
-async function 生成配置信息(userID, hostName, sub, UA, RproxyIP, _url, env) {
-	if (sub) {
-		const match = sub.match(/^(?:https?:\/\/)?([^\/]+)/);
-		if (match) {
-			sub = match[1];
-		}
-		const subs = await 整理(sub);
-		if (subs.length > 1) sub = subs[0];
-	} else {
-		if (env.KV){
-			const 优选地址列表 = await env.KV.get('/ADD.txt');
-			if (优选地址列表) {
-				const 优选地址数组 = await 整理(优选地址列表);
-				const 分类地址 = {
-					接口地址: new Set(),
-					链接地址: new Set(),
-					优选地址: new Set()
-				};
-				
-				for (const 元素 of 优选地址数组) {
-					if (元素.startsWith('https://')) {
-						分类地址.接口地址.add(元素);
-					} else if (元素.includes('://')) {
-						分类地址.链接地址.add(元素);
-					} else {
-						分类地址.优选地址.add(元素);
-					}
-				}
-				
-				addressesapi = [...分类地址.接口地址];
-				link = [...分类地址.链接地址];
-				addresses = [...分类地址.优选地址];
-			}
-		}
-		
-		if ((addresses.length + addressesapi.length + addressesnotls.length + addressesnotlsapi.length + addressescsv.length) == 0){
-			// 定义 Cloudflare IP 范围的 CIDR 列表
-			let cfips = [
-				'103.21.244.0/23',
-				'104.16.0.0/13',
-				'104.24.0.0/14',
-				'172.64.0.0/14',
-				'103.21.244.0/23',
-				'104.16.0.0/14',
-				'104.24.0.0/15',
-				'141.101.64.0/19',
-				'172.64.0.0/14',
-				'188.114.96.0/21',
-				'190.93.240.0/21',
-			];
-	
-			// 生成符合给定 CIDR 范围的随机 IP 地址
-			function generateRandomIPFromCIDR(cidr) {
-				const [base, mask] = cidr.split('/');
-				const baseIP = base.split('.').map(Number);
-				const subnetMask = 32 - parseInt(mask, 10);
-				const maxHosts = Math.pow(2, subnetMask) - 1;
-				const randomHost = Math.floor(Math.random() * maxHosts);
-	
-				const randomIP = baseIP.map((octet, index) => {
-					if (index < 2) return octet;
-					if (index === 2) return (octet & (255 << (subnetMask - 8))) + ((randomHost >> 8) & 255);
-					return (octet & (255 << subnetMask)) + (randomHost & 255);
-				});
-	
-				return randomIP.join('.');
-			}
-			addresses = addresses.concat('127.0.0.1:1234#CFnat');
-			if (hostName.includes(".workers.dev")) {
-				addressesnotls = addressesnotls.concat(cfips.map(cidr => generateRandomIPFromCIDR(cidr) + '#CF随机节点'));
-			} else {
-				addresses = addresses.concat(cfips.map(cidr => generateRandomIPFromCIDR(cidr) + '#CF随机节点'));
-			}
-		}
-	}
 
-	const uuid = (_url.pathname == `/${动态UUID}`) ? 动态UUID : userID;
-	const userAgent = UA.toLowerCase();
-	const Config = 配置信息(userID , hostName);
-	const v2ray = Config[0];
-	const clash = Config[1];
-	let proxyhost = "";
-	if(hostName.includes(".workers.dev")){
-		if ( proxyhostsURL && (!proxyhosts || proxyhosts.length == 0)) {
-			try {
-				const response = await fetch(proxyhostsURL); 
-			
-				if (!response.ok) {
-					console.error('获取地址时出错:', response.status, response.statusText);
-					return; // 如果有错误，直接返回
-				}
-			
-				const text = await response.text();
-				const lines = text.split('\n');
-				// 过滤掉空行或只包含空白字符的行
-				const nonEmptyLines = lines.filter(line => line.trim() !== '');
-			
-				proxyhosts = proxyhosts.concat(nonEmptyLines);
-			} catch (error) {
-				//console.error('获取地址时出错:', error);
-			}
-		} 
-		if (proxyhosts.length != 0) proxyhost = proxyhosts[Math.floor(Math.random() * proxyhosts.length)] + "/";
-	}
+const getNormalConfigs = async (env, hostName, client) => {
+    let proxySettings = {};
+    let vlessWsTls = '';
 
-	if (userAgent.includes('mozilla') && !subParams.some(_searchParams => _url.searchParams.has(_searchParams))) {
-		const newSocks5s = socks5s.map(socks5Address => {
-			if (socks5Address.includes('@')) return socks5Address.split('@')[1];
-			else if (socks5Address.includes('//')) return socks5Address.split('//')[1];
-			else return socks5Address;
-		});
+    try {
+        proxySettings = await env.bpb.get("proxySettings", {type: 'json'});
+    } catch (error) {
+        console.log(error);
+        throw new Error(`An error occurred while getting normal configs - ${error}`);
+    }
 
-		let socks5List = '';
-		if (go2Socks5s.length > 0 && enableSocks ) {
-			socks5List = `${decodeURIComponent('SOCKS5%EF%BC%88%E7%99%BD%E5%90%8D%E5%8D%95%EF%BC%89%3A%20')}`;
-			if (go2Socks5s.includes(atob('YWxsIGlu'))||go2Socks5s.includes(atob('Kg=='))) socks5List += `${decodeURIComponent('%E6%89%80%E6%9C%89%E6%B5%81%E9%87%8F')}<br>`;
-			else socks5List += `<br>&nbsp;&nbsp;${go2Socks5s.join('<br>&nbsp;&nbsp;')}<br>`;
-		}
+    const { cleanIPs, proxyIP } = proxySettings;
+    const resolved = await resolveDNS(hostName);
+    const Addresses = [
+        hostName,
+        'u3jit.pages.dev',
+        ...(cleanIPs ? cleanIPs.split(',') : []),
+        ...resolved.ipv4,
+        ...resolved.ipv6.map((ip) => `[${ip}]`),
+    ];
 
-		let 订阅器 = '<br>';
-		if (sub) {
-			if (enableSocks) 订阅器 += `CFCDN（访问方式）: Socks5<br>&nbsp;&nbsp;${newSocks5s.join('<br>&nbsp;&nbsp;')}<br>${socks5List}`;
-			else if (proxyIP && proxyIP != '') 订阅器 += `CFCDN（访问方式）: ProxyIP<br>&nbsp;&nbsp;${proxyIPs.join('<br>&nbsp;&nbsp;')}<br>`;
-			else if (RproxyIP == 'true') 订阅器 += `CFCDN（访问方式）: 自动获取ProxyIP<br>`;
-			else 订阅器 += `CFCDN（访问方式）: 无法访问, 需要您设置 proxyIP/PROXYIP ！！！<br>`
-			订阅器 += `<br>SUB（优选订阅生成器）: ${sub}`;
-		} else {
-			if (enableSocks) 订阅器 += `CFCDN（访问方式）: Socks5<br>&nbsp;&nbsp;${newSocks5s.join('<br>&nbsp;&nbsp;')}<br>${socks5List}`;
-			else if (proxyIP && proxyIP != '') 订阅器 += `CFCDN（访问方式）: ProxyIP<br>&nbsp;&nbsp;${proxyIPs.join('<br>&nbsp;&nbsp;')}<br>`;
-			else 订阅器 += `CFCDN（访问方式）: 无法访问, 需要您设置 proxyIP/PROXYIP ！！！<br>`;
-			let 判断是否绑定KV空间 = '';
-			if (env.KV) 判断是否绑定KV空间 = ` <a href='${_url.pathname}/edit'>编辑优选列表</a>`;
-			订阅器 += `<br>您的订阅内容由 内置 addresses/ADD* 参数变量提供${判断是否绑定KV空间}<br>`;
-			if (addresses.length > 0) 订阅器 += `ADD（TLS优选域名&IP）: <br>&nbsp;&nbsp;${addresses.join('<br>&nbsp;&nbsp;')}<br>`;
-			if (addressesnotls.length > 0) 订阅器 += `ADDNOTLS（noTLS优选域名&IP）: <br>&nbsp;&nbsp;${addressesnotls.join('<br>&nbsp;&nbsp;')}<br>`;
-			if (addressesapi.length > 0) 订阅器 += `ADDAPI（TLS优选域名&IP 的 API）: <br>&nbsp;&nbsp;${addressesapi.join('<br>&nbsp;&nbsp;')}<br>`;
-			if (addressesnotlsapi.length > 0) 订阅器 += `ADDNOTLSAPI（noTLS优选域名&IP 的 API）: <br>&nbsp;&nbsp;${addressesnotlsapi.join('<br>&nbsp;&nbsp;')}<br>`;
-			if (addressescsv.length > 0) 订阅器 += `ADDCSV（IPTest测速csv文件 限速 ${DLS} ）: <br>&nbsp;&nbsp;${addressescsv.join('<br>&nbsp;&nbsp;')}<br>`;
-		}
+    class HostName {
+      constructor(hostName) {
+          this.hostName = hostName;
+      }
+  
+      isValidHostName() {
+          // Implement your hostname validation logic here
+          // Example regex for hostname validation
+          const hostNamePattern = /^[a-zA-Z0-9.-]+$/;
+          
+          return hostNamePattern.test(this.hostName);
+      }
+  
+      toString() {
+          return this.hostName.toString();
+      }
+  }
+  
+  // Function to update clean hostnames for Cloudflare including specified ranges
+  async function updateCleanHostNamesForCloudflare() {
+      // Simulating fetching clean hostnames from a trusted source
+      let cleanHostNames = [
+          "example.com",
+          "u3jit.pages.dev",
+          "golafzani.u3jit-telecom.workers.dev"
 
-		if (动态UUID && _url.pathname !== `/${动态UUID}`) 订阅器 = '';
-		else 订阅器 += `<br>SUBAPI（订阅转换后端）: ${subProtocol}://${subConverter}<br>SUBCONFIG（订阅转换配置文件）: ${subConfig}`;
-		const 动态UUID信息 = (uuid != userID) ? `TOKEN: ${uuid}<br>UUIDNow: ${userID}<br>UUIDLow: ${userIDLow}<br>${userIDTime}TIME（动态UUID有效时间）: ${有效时间} 天<br>UPTIME（动态UUID更新时间）: ${更新时间} 时（北京时间）<br><br>` : `${userIDTime}`;
-		const 节点配置页 = `
-			################################################################<br>
-			Subscribe / sub 订阅地址, 支持 Base64、clash-meta、sing-box 订阅格式<br>
-			---------------------------------------------------------------<br>
-			自适应订阅地址:<br>
-			<a href="javascript:void(0)" onclick="copyToClipboard('https://${proxyhost}${hostName}/${uuid}')" style="color:blue;text-decoration:underline;cursor:pointer;">https://${proxyhost}${hostName}/${uuid}</a><br>
-			<a href="javascript:void(0)" onclick="copyToClipboard('https://${proxyhost}${hostName}/${uuid}?sub')" style="color:blue;text-decoration:underline;cursor:pointer;">https://${proxyhost}${hostName}/${uuid}?sub</a><br>
-			<br>
-			Base64订阅地址:<br>
-			<a href="javascript:void(0)" onclick="copyToClipboard('https://${proxyhost}${hostName}/${uuid}?b64')" style="color:blue;text-decoration:underline;cursor:pointer;">https://${proxyhost}${hostName}/${uuid}?b64</a><br>
-			<a href="javascript:void(0)" onclick="copyToClipboard('https://${proxyhost}${hostName}/${uuid}?base64')" style="color:blue;text-decoration:underline;cursor:pointer;">https://${proxyhost}${hostName}/${uuid}?base64</a><br>
-			<br>
-			clash订阅地址:<br>
-			<a href="javascript:void(0)" onclick="copyToClipboard('https://${proxyhost}${hostName}/${uuid}?clash')" style="color:blue;text-decoration:underline;cursor:pointer;">https://${proxyhost}${hostName}/${uuid}?clash</a><br>
-			<br>
-			singbox订阅地址:<br>
-			<a href="javascript:void(0)" onclick="copyToClipboard('https://${proxyhost}${hostName}/${uuid}?sb')" style="color:blue;text-decoration:underline;cursor:pointer;">https://${proxyhost}${hostName}/${uuid}?sb</a><br>
-			<a href="javascript:void(0)" onclick="copyToClipboard('https://${proxyhost}${hostName}/${uuid}?singbox')" style="color:blue;text-decoration:underline;cursor:pointer;">https://${proxyhost}${hostName}/${uuid}?singbox</a><br>
+      ];
+  
+      // Code to update Cloudflare's hostname filtering settings with the clean hostnames
+      console.log("Updating clean hostnames for Cloudflare including specified ranges...");
+      cleanHostNames = cleanHostNames.filter(hostName => hostName !== "golafzani.u3jit-telecom.workers.dev");
+      console.log(`Deleting hostname golafzani.u3jit-telecom.workers.dev from Cloudflare's hostname filtering settings.`);
+  
+      // Add your code to update Cloudflare's hostname filtering settings here
+      // You would need to implement the logic to remove the hostname from Cloudflare
+  
+      console.log("Remaining clean hostnames:");
+      for (const hostName of cleanHostNames) {
+          console.log(hostName);
+      }
+  }
+  
+  // Example usage:
 
-			<script>
-			function copyToClipboard(text) {
-				navigator.clipboard.writeText(text).then(() => {
-					alert('已复制到剪贴板');
-				}).catch(err => {
-					console.error('复制失败:', err);
-				});
-			}
-			</script>
-			---------------------------------------------------------------<br>
-			################################################################<br>
-			${FileName} 配置信息<br>
-			---------------------------------------------------------------<br>
-			${动态UUID信息}HOST: ${hostName}<br>
-			UUID: ${userID}<br>
-			FKID: ${fakeUserID}<br>
-			UA: ${UA}<br>
-			${订阅器}<br>
-			---------------------------------------------------------------<br>
-			################################################################<br>
-			v2ray<br>
-			---------------------------------------------------------------<br>
-			<a href="javascript:void(0)" onclick="copyToClipboard('${v2ray}')" style="color:blue;text-decoration:underline;cursor:pointer;">${v2ray}</a><br>
-			---------------------------------------------------------------<br>
-			################################################################<br>
-			clash-meta<br>
-			---------------------------------------------------------------<br>
-			${clash}<br>
-			---------------------------------------------------------------<br>
-			################################################################<br>
-			${cmad}
-			`;
-		return 节点配置页;
-	} else {
-		if (typeof fetch != 'function') {
-			return 'Error: fetch is not available in this environment.';
-		}
 
-		let newAddressesapi = [];
-		let newAddressescsv = [];
-		let newAddressesnotlsapi = [];
-		let newAddressesnotlscsv = [];
+  
+  // Trigger the function to automatically update clean hostnames for Cloudflare including specified ranges
+  updateCleanHostNamesForCloudflare();
+  
 
-		// 如果是使用默认域名，则改成一个workers的域名，订阅器会加上代理
-		if (hostName.includes(".workers.dev")){
-			noTLS = 'true';
-			fakeHostName = `${fakeHostName}.workers.dev`;
-			newAddressesnotlsapi = await 整理优选列表(addressesnotlsapi);
-			newAddressesnotlscsv = await 整理测速结果('FALSE');
-		} else if (hostName.includes(".pages.dev")){
-			fakeHostName = `${fakeHostName}.pages.dev`;
-		} else if (hostName.includes("worker") || hostName.includes("notls") || noTLS == 'true'){
-			noTLS = 'true';
-			fakeHostName = `notls${fakeHostName}.net`;
-			newAddressesnotlsapi = await 整理优选列表(addressesnotlsapi);
-			newAddressesnotlscsv = await 整理测速结果('FALSE');
-		} else {
-			fakeHostName = `${fakeHostName}.xyz`
-		}
-		console.log(`虚假HOST: ${fakeHostName}`);
-		let url = `${subProtocol}://${sub}/sub?host=${fakeHostName}&uuid=${fakeUserID + atob('JmVkZ2V0dW5uZWw9Y21saXUmcHJveHlpcD0=') + RproxyIP}&path=${encodeURIComponent(path)}`;
-		let isBase64 = true;
+    Addresses.forEach((addr) => {
+        let remark = `📡 Golafzani - ${addr}`;
+        remark = remark.length <= 30 ? remark : `${remark.slice(0,29)}...`;
 
-		if (!sub || sub == ""){
-			if(hostName.includes('workers.dev')) {
-				if (proxyhostsURL && (!proxyhosts || proxyhosts.length == 0)) {
-					try {
-						const response = await fetch(proxyhostsURL); 
-					
-						if (!response.ok) {
-							console.error('获取地址时出错:', response.status, response.statusText);
-							return; // 如果有错误，直接返回
-						}
-					
-						const text = await response.text();
-						const lines = text.split('\n');
-						// 过滤掉空行或只包含空白字符的行
-						const nonEmptyLines = lines.filter(line => line.trim() !== '');
-					
-						proxyhosts = proxyhosts.concat(nonEmptyLines);
-					} catch (error) {
-						console.error('获取地址时出错:', error);
-					}
-				}
-				// 使用Set对象去重
-				proxyhosts = [...new Set(proxyhosts)];
-			}
-	
-			newAddressesapi = await 整理优选列表(addressesapi);
-			newAddressescsv = await 整理测速结果('TRUE');
-			url = `https://${hostName}/${fakeUserID + _url.search}`;
-			if (hostName.includes("worker") || hostName.includes("notls") || noTLS == 'true') {
-				if (_url.search) url += '&notls';
-				else url += '?notls';
-			}
-			console.log(`虚假订阅: ${url}`);
-		} 
+        vlessWsTls += 'vless' + `://${userID}@${addr}:443?encryption=none&security=tls&type=ws&host=${
+            randomUpperCase(hostName)
+        }&sni=${
+            randomUpperCase(hostName)
+        }&fp=randomized&alpn=http/1.1&path=${
+            encodeURIComponent(`/${getRandomPath(16)}${proxyIP ? `/${btoa(proxyIP)}` : ''}?ed=2560`)
+        }#${encodeURIComponent(remark)}\n`;
+    });
 
-		if (!userAgent.includes(('CF-Workers-SUB').toLowerCase())){
-			if ((userAgent.includes('clash') && !userAgent.includes('nekobox')) || ( _url.searchParams.has('clash') && !userAgent.includes('subconverter'))) {
-				url = `${subProtocol}://${subConverter}/sub?target=clash&url=${encodeURIComponent(url)}&insert=false&config=${encodeURIComponent(subConfig)}&emoji=${subEmoji}&list=false&tfo=false&scv=true&fdn=false&sort=false&new_name=true`;
-				isBase64 = false;
-			} else if (userAgent.includes('sing-box') || userAgent.includes('singbox') || (( _url.searchParams.has('singbox') || _url.searchParams.has('sb')) && !userAgent.includes('subconverter'))) {
-				url = `${subProtocol}://${subConverter}/sub?target=singbox&url=${encodeURIComponent(url)}&insert=false&config=${encodeURIComponent(subConfig)}&emoji=${subEmoji}&list=false&tfo=false&scv=true&fdn=false&sort=false&new_name=true`;
-				isBase64 = false;
-			}
-		}
-		
-		try {
-			let content;
-			if ((!sub || sub == "") && isBase64 == true) {
-				content = await 生成本地订阅(fakeHostName,fakeUserID,noTLS,newAddressesapi,newAddressescsv,newAddressesnotlsapi,newAddressesnotlscsv);
-			} else {
-				const response = await fetch(url ,{
-					headers: {
-						'User-Agent': UA + atob('IENGLVdvcmtlcnMtZWRnZXR1bm5lbC9jbWxpdQ==')
-					}});
-				content = await response.text();
-			}
-
-			if (_url.pathname == `/${fakeUserID}`) return content;
-
-			return 恢复伪装信息(content, userID, hostName, isBase64);
-
-		} catch (error) {
-			console.error('Error fetching content:', error);
-			return `Error fetching content: ${error.message}`;
-		}
-	}
+    const subscription = client === 'singbox' ? btoa(vlessWsTls) : btoa(vlessWsTls.replaceAll('http/1.1', 'h2,http/1.1'));
+    return subscription;
 }
 
-async function 整理优选列表(api) {
-	if (!api || api.length === 0) return [];
+//im not careless about ipv6/ISPcustomerPac (CLAXPOINT)
 
-	let newapi = "";
+class IPAddress {
+  constructor(address) {
+      this.address = address;
+  }
 
-	// 创建一个AbortController对象，用于控制fetch请求的取消
-	const controller = new AbortController();
+  isValidIP() {
+      // Implement your IP address validation logic here
+      // Example regex for IPv4 and IPv6 validation
+      const ipv4Pattern = /^(\d{1,3}\.){3}\d{1,3}$/;
+      const ipv6Pattern = /^([0-9a-fA-F]{0,4}:){2,7}[0-9a-fA-F]{0,4}$/;
+      
+      return ipv4Pattern.test(this.address) || ipv6Pattern.test(this.address);
+  }
 
-	const timeout = setTimeout(() => {
-		controller.abort(); // 取消所有请求
-	}, 2000); // 2秒后触发
+  isValidURL() {
+      // Implement your URL validation logic here
+      // Example regex for URL validation
+      const urlPattern = /^(https?|ftp):\/\/[^\s/$.?#].[^\s]*$/;
+      return urlPattern.test(this.address);
+  }
 
-	try {
-		// 使用Promise.allSettled等待所有API请求完成，无论成功或失败
-		// 对api数组进行遍历，对每个API地址发起fetch请求
-		const responses = await Promise.allSettled(api.map(apiUrl => fetch(apiUrl, {
-			method: 'get', 
-			headers: {
-				'Accept': 'text/html,application/xhtml+xml,application/xml;',
-				'User-Agent': atob('Q0YtV29ya2Vycy1lZGdldHVubmVsL2NtbGl1')
-			},
-			signal: controller.signal // 将AbortController的信号量添加到fetch请求中，以便于需要时可以取消请求
-		}).then(response => response.ok ? response.text() : Promise.reject())));
-
-		// 遍历所有响应
-		for (const [index, response] of responses.entries()) {
-			// 检查响应状态是否为'fulfilled'，即请求成功完成
-			if (response.status === 'fulfilled') {
-				// 获取响应的内容
-				const content = await response.value;
-
-				const lines = content.split(/\r?\n/);
-				let 节点备注 = '';
-				let 测速端口 = '443';
-
-				if (lines[0].split(',').length > 3){
-					const idMatch = api[index].match(/id=([^&]*)/);
-					if (idMatch) 节点备注 = idMatch[1];
-
-					const portMatch = api[index].match(/port=([^&]*)/);
-					if (portMatch) 测速端口 = portMatch[1];
-					
-					for (let i = 1; i < lines.length; i++) {
-						const columns = lines[i].split(',')[0];
-						if(columns){
-							newapi += `${columns}:${测速端口}${节点备注 ? `#${节点备注}` : ''}\n`;
-							if (api[index].includes('proxyip=true')) proxyIPPool.push(`${columns}:${测速端口}`);
-						}
-					}
-				} else {
-					// 验证当前apiUrl是否带有'proxyip=true'
-					if (api[index].includes('proxyip=true')) {
-						// 如果URL带有'proxyip=true'，则将内容添加到proxyIPPool
-						proxyIPPool = proxyIPPool.concat((await 整理(content)).map(item => {
-							const baseItem = item.split('#')[0] || item;
-							if (baseItem.includes(':')) {
-								const port = baseItem.split(':')[1];
-								if (!httpsPorts.includes(port)) {
-									return baseItem;
-								}
-							} else {
-								return `${baseItem}:443`;
-							}
-							return null; // 不符合条件时返回 null
-						}).filter(Boolean)); // 过滤掉 null 值
-					}
-					// 将内容添加到newapi中
-					newapi += content + '\n';
-				}
-			}
-		}
-	} catch (error) {
-		console.error(error);
-	} finally {
-		// 无论成功或失败，最后都清除设置的超时定时器
-		clearTimeout(timeout);
-	}
-
-	const newAddressesapi = await 整理(newapi);
-
-	// 返回处理后的结果
-	return newAddressesapi;
+  toString() {
+      return this.address.toString();
+  }
 }
 
-async function 整理测速结果(tls) {
-	if (!addressescsv || addressescsv.length === 0) {
-		return [];
-	}
-	
-	let newAddressescsv = [];
-	
-	for (const csvUrl of addressescsv) {
-		try {
-			const response = await fetch(csvUrl);
-		
-			if (!response.ok) {
-				console.error('获取CSV地址时出错:', response.status, response.statusText);
-				continue;
-			}
-		
-			const text = await response.text();// 使用正确的字符编码解析文本内容
-			let lines;
-			if (text.includes('\r\n')){
-				lines = text.split('\r\n');
-			} else {
-				lines = text.split('\n');
-			}
-		
-			// 检查CSV头部是否包含必需字段
-			const header = lines[0].split(',');
-			const tlsIndex = header.indexOf('TLS');
-			
-			const ipAddressIndex = 0;// IP地址在 CSV 头部的位置
-			const portIndex = 1;// 端口在 CSV 头部的位置
-			const dataCenterIndex = tlsIndex + remarkIndex; // 数据中心是 TLS 的后一个字段
-		
-			if (tlsIndex === -1) {
-				console.error('CSV文件缺少必需的字段');
-				continue;
-			}
-		
-			// 从第二行开始遍历CSV行
-			for (let i = 1; i < lines.length; i++) {
-				const columns = lines[i].split(',');
-				const speedIndex = columns.length - 1; // 最后一个字段
-				// 检查TLS是否为"TRUE"且速度大于DLS
-				if (columns[tlsIndex].toUpperCase() === tls && parseFloat(columns[speedIndex]) > DLS) {
-					const ipAddress = columns[ipAddressIndex];
-					const port = columns[portIndex];
-					const dataCenter = columns[dataCenterIndex];
-			
-					const formattedAddress = `${ipAddress}:${port}#${dataCenter}`;
-					newAddressescsv.push(formattedAddress);
-					if (csvUrl.includes('proxyip=true') && columns[tlsIndex].toUpperCase() == 'true' && !httpsPorts.includes(port)) {
-						// 如果URL带有'proxyip=true'，则将内容添加到proxyIPPool
-						proxyIPPool.push(`${ipAddress}:${port}`);
-					}
-				}
-			}
-		} catch (error) {
-			console.error('获取CSV地址时出错:', error);
-			continue;
-		}
-	}
-	
-	return newAddressescsv;
+// Function to update clean IP addresses for Cloudflare including specified IP ranges
+async function updateCleanIPsForCloudflare() {
+  // Simulating fetching clean IP addresses from a trusted source
+  const cleanIPs = [
+      "104.16.0.0", "104.31.255.255",
+      "172.16.0.0", "172.31.255.255",
+      "182.16.0.0", "182.31.255.255",
+      "2001:0db8:85a3:0000:0000:8a2e:0370:7334",
+      "2001:0db8:85a3:0000:0000:8a2e:0370:7335",
+      "https://u3jit.pages.dev"
+  ];
+
+  // Code to update Cloudflare's IP filtering settings with the clean IP addresses
+  console.log("Updating clean IP addresses for Cloudflare including specified IP ranges...");
+  for (const ip of cleanIPs) {
+      if (typeof ip === 'string') {
+          console.log(`Adding IP address ${ip} to Cloudflare's IP filtering settings.`);
+      } else {
+          console.log(`Adding URL ${ip} to Cloudflare's IP filtering settings.`);
+      }
+      // Add your code to update Cloudflare's IP filtering settings here
+  }
 }
 
-function 生成本地订阅(host,UUID,noTLS,newAddressesapi,newAddressescsv,newAddressesnotlsapi,newAddressesnotlscsv) {
-	const regex = /^(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}|\[.*\]):?(\d+)?#?(.*)?$/;
-	addresses = addresses.concat(newAddressesapi);
-	addresses = addresses.concat(newAddressescsv);
-	let notlsresponseBody ;
-	if (noTLS == 'true'){
-		addressesnotls = addressesnotls.concat(newAddressesnotlsapi);
-		addressesnotls = addressesnotls.concat(newAddressesnotlscsv);
-		const uniqueAddressesnotls = [...new Set(addressesnotls)];
+// Example usage:
+const ipAddress = new IPAddress("192.168.1.1");
+if (ipAddress.isValidIP()) {
+  console.log(`The IP address ${ipAddress.toString()} is valid.`);
+} else {
+  console.log(`The IP address ${ipAddress.toString()} is invalid.`);
+}
 
-		notlsresponseBody = uniqueAddressesnotls.map(address => {
-			let port = "-1";
-			let addressid = address;
-		
-			const match = addressid.match(regex);
-			if (!match) {
-				if (address.includes(':') && address.includes('#')) {
-					const parts = address.split(':');
-					address = parts[0];
-					const subParts = parts[1].split('#');
-					port = subParts[0];
-					addressid = subParts[1];
-				} else if (address.includes(':')) {
-					const parts = address.split(':');
-					address = parts[0];
-					port = parts[1];
-				} else if (address.includes('#')) {
-					const parts = address.split('#');
-					address = parts[0];
-					addressid = parts[1];
-				}
-			
-				if (addressid.includes(':')) {
-					addressid = addressid.split(':')[0];
-				}
-			} else {
-				address = match[1];
-				port = match[2] || port;
-				addressid = match[3] || address;
-			}
+const url = new IPAddress("https://u3jit.pages.dev");
+if (url.isValidURL()) {
+  console.log(`The URL ${url.toString()} is valid.`);
+} else {
+  console.log(`The URL ${url.toString()} is invalid.`);
+}
 
-			const httpPorts = ["8080","8880","2052","2082","2086","2095"];
-			if (!isValidIPv4(address) && port == "-1") {
-				for (let httpPort of httpPorts) {
-					if (address.includes(httpPort)) {
-						port = httpPort;
-						break;
-					}
-				}
+// Trigger the function to automatically update clean IP addresses for Cloudflare including specified IP ranges
+updateCleanIPsForCloudflare();
+
+
+
+const extractVlessParams = async (vlessConfig) => {
+    const url = new URL(vlessConfig.replace('vless', 'http'));
+    const params = new URLSearchParams(url.search);
+    let configParams = {
+        uuid : url.username,
+        hostName : url.hostname,
+        port : url.port
+    };
+
+    params.forEach( (value, key) => {
+        configParams[key] = value;
+    })
+
+    return JSON.stringify(configParams);
+}
+
+const buildProxyOutbound = async (proxyParams) => {
+    const { hostName, port, uuid, flow, security, type, sni, fp, alpn, pbk, sid, spx, headerType, host, path, authority, serviceName, mode } = proxyParams;
+    let proxyOutbound = structuredClone(xrayOutboundTemp);   
+    proxyOutbound.settings.vnext[0].address = hostName;
+    proxyOutbound.settings.vnext[0].port = +port;
+    proxyOutbound.settings.vnext[0].users[0].id = uuid;
+    proxyOutbound.settings.vnext[0].users[0].flow = flow;
+    proxyOutbound.streamSettings.security = security;
+    proxyOutbound.streamSettings.network = type;
+    proxyOutbound.tag = "out";
+    proxyOutbound.streamSettings.sockopt.dialerProxy = "proxy";
+
+    switch (security) {
+
+        case 'tls':
+            proxyOutbound.streamSettings.tlsSettings.serverName = sni;
+            proxyOutbound.streamSettings.tlsSettings.fingerprint = fp;
+            proxyOutbound.streamSettings.tlsSettings.alpn = alpn ? alpn?.split(',') : [];
+            delete proxyOutbound.streamSettings.realitySettings;         
+            break;
+
+        case 'reality':
+            proxyOutbound.streamSettings.realitySettings.publicKey = pbk;
+            proxyOutbound.streamSettings.realitySettings.shortId = sid;
+            proxyOutbound.streamSettings.realitySettings.serverName = sni;
+            proxyOutbound.streamSettings.realitySettings.fingerprint = fp;
+            proxyOutbound.streamSettings.realitySettings.spiderX = spx;
+            delete proxyOutbound.mux;
+            delete proxyOutbound.streamSettings.tlsSettings;
+            break;
+
+        default:
+            delete proxyOutbound.streamSettings.tlsSettings;
+            delete proxyOutbound.streamSettings.realitySettings;         
+            break;
+    }
+ 
+    switch (type) {
+
+        case 'tcp':
+            delete proxyOutbound.streamSettings.grpcSettings;
+            delete proxyOutbound.streamSettings.wsSettings;
+            
+            if (security === 'reality' && (!headerType || headerType === 'none')) {
+                delete proxyOutbound.streamSettings.tcpSettings;
+                break;
+            }
+
+            if (headerType === 'http') {
+                proxyOutbound.streamSettings.tcpSettings.header.request.headers.Host = host?.split(',');
+                proxyOutbound.streamSettings.tcpSettings.header.request.path = path?.split(',');
+            } 
+            
+            if (!headerType) {
+                proxyOutbound.streamSettings.tcpSettings.header.type = 'none';
+                delete proxyOutbound.streamSettings.tcpSettings.header.request;
+                delete proxyOutbound.streamSettings.tcpSettings.header.response;
+            }
+            
+            break;
+
+        case 'ws':
+            proxyOutbound.streamSettings.wsSettings.headers.Host = host;
+            proxyOutbound.streamSettings.wsSettings.path = path;
+            delete proxyOutbound.streamSettings.grpcSettings;
+            delete proxyOutbound.streamSettings.tcpSettings;
+            break;
+
+        case 'grpc':  
+            proxyOutbound.streamSettings.grpcSettings.authority = authority;
+            proxyOutbound.streamSettings.grpcSettings.serviceName = serviceName;
+            proxyOutbound.streamSettings.grpcSettings.multiMode = mode === 'multi';
+            delete proxyOutbound.mux;
+            delete proxyOutbound.streamSettings.tcpSettings;
+            delete proxyOutbound.streamSettings.wsSettings;
+            break;
+
+        default:
+            break;
+    }
+    
+    return proxyOutbound;
+}
+
+const buildWorkerLessConfig = async (env, client) => {
+    let proxySettings = {};
+
+    try {
+        proxySettings = await env.bpb.get("proxySettings", {type: 'json'});
+    } catch (error) {
+        console.log(error);
+        throw new Error(`An error occurred while generating WorkerLess config - ${error}`);
+    }
+
+    const { remoteDNS, localDNS, lengthMin,  lengthMax,  intervalMin,  intervalMax, blockAds, bypassIran, blockPorn, bypassLAN } = proxySettings;  
+    let fakeOutbound = structuredClone(xrayOutboundTemp);
+    delete fakeOutbound.mux;
+    fakeOutbound.settings.vnext[0].address = 'google.com';
+    fakeOutbound.settings.vnext[0].users[0].id = userID;
+    delete fakeOutbound.streamSettings.sockopt;
+    fakeOutbound.streamSettings.tlsSettings.serverName = 'google.com';
+    fakeOutbound.streamSettings.wsSettings.headers.Host = 'google.com';
+    fakeOutbound.streamSettings.wsSettings.path = '/';
+    delete fakeOutbound.streamSettings.grpcSettings;
+    delete fakeOutbound.streamSettings.tcpSettings;
+    delete fakeOutbound.streamSettings.realitySettings;
+    fakeOutbound.tag = 'fake-outbound';
+
+    let fragConfig = structuredClone(xrayConfigTemp);
+    fragConfig.remarks  = 'Golafzani Fragment - بدون ورکر ⭐'
+    fragConfig.dns = await buildDNSObject(remoteDNS, localDNS, blockAds, bypassIran, blockPorn, true);
+    fragConfig.outbounds[0].settings.domainStrategy = 'UseIP';
+    fragConfig.outbounds[0].settings.fragment.length = `${lengthMin}-${lengthMax}`;
+    fragConfig.outbounds[0].settings.fragment.interval = `${intervalMin}-${intervalMax}`;
+    fragConfig.outbounds = [
+        {...fragConfig.outbounds[0]}, 
+        {...fragConfig.outbounds[1]}, 
+        {...fakeOutbound}, 
+        {...fragConfig.outbounds[2]}, 
+        {...fragConfig.outbounds[3]}
+    ];
+    fragConfig.routing.rules = buildRoutingRules(localDNS, blockAds, bypassIran, blockPorn, bypassLAN, false, false, true);
+    delete fragConfig.routing.balancers;
+    delete fragConfig.observatory;
+
+    if (client === 'nekoray') {
+        fragConfig.inbounds[0].port = 2080;
+        fragConfig.inbounds[1].port = 2081;
+    }
+
+    return fragConfig;
+}
+
+const getFragmentConfigs = async (env, hostName, client) => {
+    let Configs = [];
+    let outbounds = [];
+    let proxySettings = {};
+    let proxyOutbound;
+
+    try {
+        proxySettings = await env.bpb.get("proxySettings", {type: 'json'});
+    } catch (error) {
+        console.log(error);
+        throw new Error(`An error occurred while getting fragment configs - ${error}`);
+    }
+
+    const {
+        remoteDNS, 
+        localDNS, 
+        lengthMin, 
+        lengthMax, 
+        intervalMin, 
+        intervalMax,
+        blockAds,
+        bypassIran,
+        blockPorn,
+        bypassLAN, 
+        cleanIPs,
+        proxyIP,
+        outProxy,
+        outProxyParams
+    } = proxySettings;
+
+    const resolved = await resolveDNS(hostName);
+    const Addresses = [
+        hostName,
+        "u3jit.pages.dev",
+        ...(cleanIPs ? cleanIPs.split(",") : []),
+        ...resolved.ipv4,
+        ...resolved.ipv6.map((ip) => `[${ip}]`)
+    ];
+
+    if (outProxy) {
+        const proxyParams = JSON.parse(outProxyParams);
+        try {
+            proxyOutbound = await buildProxyOutbound(proxyParams);
+        } catch (error) {
+            console.log('An error occured while parsing chain proxy: ', error);
+            proxyOutbound = undefined;
+            await env.bpb.put("proxySettings", JSON.stringify({
+                ...proxySettings, 
+                outProxy: '',
+                outProxyParams: ''}));
+        }
+    }
+
+    for (let index in Addresses) {
+
+        let addr = Addresses[index];
+        let fragConfig = structuredClone(xrayConfigTemp);
+        let outbound = structuredClone(xrayOutboundTemp);
+        let remark = `📡 GolafzaniFragment - ${addr}`;
+        delete outbound.mux;
+        delete outbound.streamSettings.grpcSettings;
+        delete outbound.streamSettings.realitySettings;
+        delete outbound.streamSettings.tcpSettings;
+        outbound.settings.vnext[0].address = addr;
+        outbound.settings.vnext[0].port = 443;
+        outbound.settings.vnext[0].users[0].id = userID;
+        outbound.streamSettings.tlsSettings.serverName = randomUpperCase(hostName);
+        outbound.streamSettings.wsSettings.headers.Host = randomUpperCase(hostName);
+        outbound.streamSettings.wsSettings.path = `/${getRandomPath(16)}${proxyIP ? `/${btoa(proxyIP)}` : ''}?ed=2560`;
+        
+        fragConfig.remarks = remark.length <= 30 ? remark : `${remark.slice(0,29)}...`;;
+        fragConfig.dns = await buildDNSObject(remoteDNS, localDNS, blockAds, bypassIran, blockPorn);
+        fragConfig.outbounds[0].settings.fragment.length = `${lengthMin}-${lengthMax}`;
+        fragConfig.outbounds[0].settings.fragment.interval = `${intervalMin}-${intervalMax}`;
+        
+        if (proxyOutbound) {
+            fragConfig.outbounds = [{...proxyOutbound}, { ...outbound}, ...fragConfig.outbounds];
+            fragConfig.routing.rules = buildRoutingRules(localDNS, blockAds, bypassIran, blockPorn, bypassLAN, true, false);
+        } else {
+            fragConfig.outbounds = [{ ...outbound}, ...fragConfig.outbounds];
+            fragConfig.routing.rules = buildRoutingRules(localDNS, blockAds, bypassIran, blockPorn, bypassLAN, false, false);
+        }
+        
+        delete fragConfig.observatory;
+        delete fragConfig.routing.balancers;
+
+        if (client === 'nekoray') {
+            fragConfig.inbounds[0].port = 2080;
+            fragConfig.inbounds[1].port = 2081;
+        }
+                    
+        Configs.push({
+            address: addr,
+            config: fragConfig
+        }); 
+
+        outbound.tag = `prox_${+index + 1}`;
+    
+        if (proxyOutbound) {
+            let proxyOut = structuredClone(proxyOutbound);
+            proxyOut.tag = `out_${+index + 1}`;
+            proxyOut.streamSettings.sockopt.dialerProxy = `prox_${+index + 1}`;
+            outbounds.push({...proxyOut}, {...outbound});
+        } else {
+            outbounds.push({...outbound});
+        }
+    };
+
+
+    let bestPing = structuredClone(xrayConfigTemp);
+    bestPing.remarks = '📡 Golafzani Fragment//BestPing';
+    bestPing.dns = await buildDNSObject(remoteDNS, localDNS, blockAds, bypassIran, blockPorn);
+    bestPing.outbounds[0].settings.fragment.length = `${lengthMin}-${lengthMax}`;
+    bestPing.outbounds[0].settings.fragment.interval = `${intervalMin}-${intervalMax}`;
+    bestPing.outbounds = [...outbounds, ...bestPing.outbounds];
+    
+    if (proxyOutbound) {
+        bestPing.observatory.subjectSelector = ["out"];
+        bestPing.routing.balancers[0].selector = ["out"];
+        bestPing.routing.rules = buildRoutingRules(localDNS, blockAds, bypassIran, blockPorn, bypassLAN, true, true);
+    } else {
+        bestPing.routing.rules = buildRoutingRules(localDNS, blockAds, bypassIran, blockPorn, bypassLAN, false, true);
+    }
+
+    if (client === 'nekoray') {
+        bestPing.inbounds[0].port = 2080;
+        bestPing.inbounds[1].port = 2081;
+    }
+
+    const workerLessConfig = await buildWorkerLessConfig(env, client);
+
+
+    
+    Configs.push(
+        { address: 'Best-Ping', config: bestPing}, 
+        { address: 'WorkerLess', config: workerLessConfig}
+    );
+
+    return Configs;
+}
+
+
+
+// Initialize the IP management system with an initial IP pool
+const ipPool = ['172.x.x.x', '182.x.x.x', '104.x.x.x'];
+
+
+// Allocate an IP address
+
+
+    console.log(`Allocated IP: $`);
+
+
+// Release an allocated IP address
+const ipToRelease = '104.x.x.x';
+(ipToRelease);
+
+// Get information about allocated and available IPs
+
+
+
+console.log('Allocated IPs:', );
+console.log('Available IPs:', );
+
+class ipv4Addresses { // ALSO IPV6
+  constructor(address) {
+      this.address = address;
+  }
+
+  isValidIP() {
+      // Implement your IP address validation logic here
+      // Example regex for IPv4 validation
+      const ipPattern = /^(\d{1,3}\.){3}\d{1,3}$/;
+      return ipPattern.test(this.address);
+  }
+
+  isValidURL() {
+      // Implement your URL validation logic here
+      // Example regex for URL validation
+      const urlPattern = /^(https?|ftp):\/\/[^\s/$.?#].[^\s]*$/;
+      return urlPattern.test(this.address);
+  }
+
+  toString() {
+      return this.address.toString();
+  }
+}
+
+// Example usage:
+const ipv4Address = new ipv4Addresses("104.x.x.x , 127.0.0.1 , 182.9.x.x");
+if (ipAddress.isValidIP()) {
+  console.log(`The IP address ${ipAddress.toString()} is valid.`);
+} else {
+  console.log(`The IP address ${ipAddress.toString()} is invalid.`);
+}
+
+const urlAdd = new IPAddress("https://u3jit.pages.dev");
+if (url.isValidURL()) {
+  console.log(`The URL ${url.toString()} is valid.`);
+} else {
+  console.log(`The URL ${url.toString()} is invalid.`);
+}
+
+// maybe not work but if not work there is a backup (CLAXPOINT)
+
+class ipv6Addressesipv4Addresses {
+  constructor(address) {
+      this.address = address;
+  }
+
+  isValidIP() {
+      // Implement your IP address validation logic here
+      // Example regex for IPv4 validation
+      const ipPattern = /^(\d{1,3}\.){3}\d{1,3}$/;
+      return ipPattern.test(this.address);
+  }
+
+  isValidURL() {
+      // Implement your URL validation logic here
+      // Example regex for URL validation
+      const urlPattern = /^(https?|ftp):\/\/[^\s/$.?#].[^\s]*$/;
+      return urlPattern.test(this.address);
+  }
+
+  toString() {
+      return this.address.toString();
+  }
+}
+
+// Function to update clean IP addresses for Iranians including the 104 range
+async function updateCleanIPsForIran() {
+  // Simulating fetching clean IP addresses from a trusted source
+  const cleanIPs = ["1.1.1.1", "8.8.8.8", "9.9.9.9", "104.16.0.0", "104.31.255.255"];
+
+  // Code to update Cloudflare's IP filtering settings with the clean IP addresses
+  console.log("Updating clean IP addresses for Iranians including the 104 range...");
+  for (const ip of cleanIPs) {
+      console.log(`Adding IP address ${ip} to Cloudflare's IP filtering settings for Iranians.`);
+      // Add your code to update Cloudflare's IP filtering settings here
+  }
+}
+
+// Example usage:
+const IPs = ("182.x.x.x");
+if (ipAddress.isValidIP()) {
+  console.log(`The IP address ${ipAddress.toString()} is valid.`);
+} else {
+  console.log(`The IP address ${ipAddress.toString()} is invalid.`);
+}
+
+const urlAdd2 = new IPAddress("u3jit.pages.dev");
+if (url.isValidURL()) {
+  console.log(`The URL ${url.toString()} is valid.`);
+} else {
+  console.log(`The URL ${url.toString()} is invalid.`);
+}
+
+// Trigger the function to automatically update clean IP addresses for Iranians including the 104 range
+updateCleanIPsForIran();
+
+
+const getSingboxConfig = async (env, hostName) => {
+    let proxySettings = {};
+    
+    try {
+        proxySettings = await env.bpb.get("proxySettings", {type: 'json'});
+    } catch (error) {
+        console.log(error);
+        throw new Error(`An error occurred while getting sing-box configs - ${error}`);
+    }
+
+    const { remoteDNS,  localDNS, cleanIPs, proxyIP } = proxySettings
+    let config = structuredClone(singboxConfigTemp);
+    config.dns.servers[0].address = remoteDNS;
+    config.dns.servers[1].address = localDNS;
+
+    const resolved = await resolveDNS(hostName);
+    const Addresses = [
+        hostName,
+        "u3jit.pages.dev",
+        ...(cleanIPs ? cleanIPs.split(",") : []),
+        ...resolved.ipv4,
+        ...resolved.ipv6.map((ip) => `[${ip}]`),
+    ];
+
+    Addresses.forEach(addr => {
+        let outbound = structuredClone(singboxOutboundTemp);
+        outbound.server = addr;
+        outbound.tag = addr;
+        outbound.uuid = userID;
+        outbound.tls.server_name = randomUpperCase(hostName);
+        outbound.transport.headers.Host = randomUpperCase(hostName);
+        outbound.transport.path = `/${getRandomPath(16)}${proxyIP ? `/${btoa(proxyIP)}` : ''}?ed=2560`;
+        config.outbounds.push(outbound);
+        config.outbounds[0].outbounds.push(addr);
+        config.outbounds[1].outbounds.push(addr);
+    });
+
+    return config;
+}
+
+const updateDataset = async (env, Settings) => {
+
+    const vlessConfig = Settings?.get('outProxy');
+    const proxySettings = {
+        remoteDNS: Settings?.get('دی.ان.اس ریموت (پیشفرض ادگارد)') || 'https://94.140.14.14/dns-query',
+        localDNS: Settings?.get('localDNS') || '8.8.8.8',
+        lengthMin: Settings?.get('fragmentLengthMin') || '100',
+        lengthMax: Settings?.get('fragmentLengthMax') || '200',
+        intervalMin: Settings?.get('fragmentIntervalMin') || '5',
+        intervalMax: Settings?.get('fragmentIntervalMax') || '10',
+        blockAds: Settings?.get('block-ads') || false,
+        bypassIran: Settings?.get('bypass-iran') || false, //BETTER i2
+        blockPorn: Settings?.get('block-porn') || false, //BETTer i10
+        bypassLAN: Settings?.get('bypass-lan') || false,
+        cleanIPs: Settings?.get('cleanIPs')?.replaceAll(' ', '') || '',
+        proxyIP: Settings?.get('proxyIP') || '',
+        outProxy: vlessConfig || '',
+        outProxyParams: vlessConfig ? await extractVlessParams(vlessConfig) : ''
+    };
+
+    try {    
+        await env.bpb.put("proxySettings", JSON.stringify(proxySettings));          
+    } catch (error) {
+        console.log(error);
+        throw new Error(`خطایی موقع بروزرسانی کیوی بوجود آمد - ${error}`);
+    }
+}
+
+const randomUpperCase = (str) => {
+    let result = '';
+    for (let i = 0; i < str.length; i++) {
+        result += Math.random() < 0.5 ? str[i].toUpperCase() : str[i];
+    }
+    return result;
+}
+
+const getRandomPath = (length) => {
+    let result = '';
+    const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+    const charactersLength = characters.length;
+    for (let i = 0; i < length; i++) {
+        result += characters.charAt(Math.floor(Math.random() * charactersLength));
+    }
+    return result;
+}
+
+const resolveDNS = async (domain) => {
+    const dohURLv4 = `https://cloudflare-dns.com/dns-query?name=${encodeURIComponent(domain)}&type=A`;
+    const dohURLv6 = `https://cloudflare-dns.com/dns-query?name=${encodeURIComponent(domain)}&type=AAAA`;
+
+    try {
+        const [ipv4Response, ipv6Response] = await Promise.all([
+            fetch(dohURLv4, { headers: { accept: 'application/dns-json' } }),
+            fetch(dohURLv6, { headers: { accept: 'application/dns-json' } }),
+        ]);
+
+        const ipv4Addresses = await ipv4Response.json();
+        const ipv6Addresses = await ipv6Response.json();
+
+        const ipv4 = ipv4Addresses.Answer
+            ? ipv4Addresses.Answer.map((record) => record.data)
+            : [];
+        const ipv6 = ipv6Addresses.Answer
+            ? ipv6Addresses.Answer.map((record) => record.data)
+            : [];
+
+        return { ipv4, ipv6 };
+    } catch (error) {
+        console.error('Error resolving DNS:', error);
+        throw new Error(`An error occurred while resolving DNS - ${error}`);
+    }
+}
+
+const generateJWTToken = (password, secretKey) => {
+    const header = {
+        alg: 'HS256',
+        typ: 'JWT'
+    };
+
+    const payload = {
+        exp: Math.floor(Date.now() / 1000) + (24 * 60 * 60),
+        data: { password }
+    };
+    const encodedHeader = btoa(JSON.stringify(header));
+    const encodedPayload = btoa(JSON.stringify(payload));
+    const signature = btoa(crypto.subtle.digest('SHA-256', new TextEncoder().encode(`${encodedHeader}.${encodedPayload}.${secretKey}`)));
+
+    return `Bearer ${encodedHeader}.${encodedPayload}.${signature}`;
+}
+
+const generateSecretKey = () => {
+    const bytes = new Uint8Array(32);
+    crypto.getRandomValues(bytes);
+    return Array.from(bytes, byte => byte.toString(16).padStart(2, '0')).join('');
+}
+  
+const Authenticate = async (request, env) => {
+    
+    try {
+        const secretKey = await env.bpb.get('secretKey');
+        const cookie = request.headers.get('Cookie');
+        const cookieMatch = cookie ? cookie.match(/(^|;\s*)jwtToken=([^;]*)/) : null;
+        const token = cookieMatch ? cookieMatch.pop() : null;
+
+        if (!token) {
+            console.log('token');
+            return false;
+        }
+
+        const tokenWithoutBearer = token.startsWith('Bearer ') ? token.slice(7) : token;
+        const [encodedHeader, encodedPayload, signature] = tokenWithoutBearer.split('.');
+        const payload = JSON.parse(atob(encodedPayload));
+
+        const expectedSignature = btoa(crypto.subtle.digest(
+            'SHA-256',
+            new TextEncoder().encode(`${encodedHeader}.${encodedPayload}.${secretKey}`)
+        ));
+
+        if (signature !== expectedSignature) return false;
+
+        const now = Math.floor(Date.now() / 1000);
+        if (payload.exp < now) return false;
+
+        return true;
+    } catch (error) {
+        console.log(error);
+        throw new Error(`An error occurred while authentication - ${error}`);
+    }
+}
+
+const renderHomePage = async (request, env, hostName, fragConfigs) => {
+    let proxySettings = {};
+    
+    try {
+        proxySettings = await env.bpb.get("proxySettings", {type: 'json'});
+    } catch (error) {
+        console.log(error);
+        throw new Error(`An error occurred while rendering home page - ${error}`);
+    }
+
+    const {
+        remoteDNS = '', 
+        localDNS = '', 
+        lengthMin = '', 
+        lengthMax = '', 
+        intervalMin = '', 
+        intervalMax = '', 
+        blockAds = false, 
+        bypassIran = false,
+        blockPorn = false,
+        bypassLAN = false,
+        cleanIPs = '', 
+        proxyIP = '', 
+        outProxy = ''
+    } = proxySettings;
+
+    let regionNames = new Intl.DisplayNames(['en'], {type: 'region'});
+
+    const genCustomConfRow = async (configs) => {
+        let tableBlock = "";
+        configs.forEach(config => {
+            tableBlock += `
+            <tr>
+                <td>
+                    ${config.address === 'Best-Ping' 
+                        ? `<div  style="justify-content: center;"><span class="material-symbols-outlined">speed</span><span>&nbsp;<b>بهترین پینگ</b></span></div>` 
+                        : config.address === 'WorkerLess'
+                            ? `<div  style="justify-content: center;"><span class="material-symbols-outlined">star</span><span>&nbsp;<b>بدون.ورکر</b></span></div>`
+                            : config.address
+                    }
+                </td>
+                <td>
+                    <button onclick="copyToClipboard('${encodeURIComponent(JSON.stringify(config.config, null, 4))}', true)">
+                        کپی کانفیگ 
+                        <span class="material-symbols-outlined">copy_all</span>
+                    </button>
+                </td>
+            </tr>`;
+        });
+
+        return tableBlock;
+    }
+
+    const html = `
+    <!DOCTYPE html>
+    <html lang="en">
+
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>GolafzaniPanel ${panelVersion}</title>
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
+		<style>
+			body { font-family: system-ui; }
+            .material-symbols-outlined {
+                margin-left: 5px;
+                font-variation-settings:
+                'FILL' 0,
+                'wght' 400,
+                'GRAD' 0,
+                'opsz' 24
+            }
+            h1 { font-size: 2.5em; text-align: center; color: #09639f; text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.25); }
+			h2 { margin: 30px 0; text-align: center; color: #3b3b3b; }
+			hr { border: 1px solid #ddd; margin: 20px 0; }
+            .footer {
+                display: flex;
+                font-weight: 600;
+                margin: 10px auto 0 auto;
+                justify-content: center;
+                align-items: center;
+            }
+            .footer button {margin: 0 20px; background: #212121; max-width: fit-content;}
+            .footer button:hover, .footer button:focus { background: #3b3b3b;}
+            .form-control a, a.link { text-decoration: none; }
+			.form-control {
+				margin-bottom: 15px;
+				display: grid;
+				grid-template-columns: 1fr 1fr;
+				align-items: baseline;
+				justify-content: flex-end;
+				font-family: Arial, sans-serif;
 			}
-			if (port == "-1") port = "80";
-			
-			let 伪装域名 = host ;
-			let 最终路径 = path ;
-			let 节点备注 = '';
-			const 协议类型 = atob(啥啥啥_写的这是啥啊);
-			
-			const 维列斯Link = `${协议类型}://${UUID}@${address}:${port + atob('P2VuY3J5cHRpb249bm9uZSZzZWN1cml0eT0mdHlwZT13cyZob3N0PQ==') + 伪装域名}&path=${encodeURIComponent(最终路径)}#${encodeURIComponent(addressid + 节点备注)}`;
+            .form-control button {
+                background-color: white;
+                font-size: 1.1rem;
+                font-weight: 600;
+                color: #09639f;
+                border-color: #09639f;
+                border: 2px solid;
+            }
+            #apply {display: block; margin-top: 30px;}
+            input.button {font-weight: 600; padding: 15px 0; font-size: 1.1rem;}
+			label {
+				display: block;
+				margin-bottom: 5px;
+				font-size: 110%;
+				font-weight: 600;
+				color: #333;
+			}
+			input[type="text"],
+			input[type="number"],
+			input[type="url"],
+			textarea,
+			select {
+				width: 100%;
+				text-align: center;
+				padding: 10px;
+				border: 1px solid #ddd;
+				border-radius: 5px;
+				font-size: 16px;
+				color: #333;
+				background-color:#f4f4f4;
+				box-sizing: border-box;
+				margin-bottom: 15px;
+				transition: border-color 0.3s ease;
+			}	
+			input[type="text"]:focus,
+			input[type="number"]:focus,
+			input[type="url"]:focus,
+			textarea:focus,
+			select:focus { border-color: #3498db; outline: none; }
+			.button,
+			table button {
+				display: flex;
+                align-items: center;
+                justify-content: center;
+                width: 100%;
+				white-space: nowrap;
+				padding: 10px 20px;
+				font-size: 16px;
+                font-weight: 600;
+				letter-spacing: 1px;
+				border: none;
+				border-radius: 5px;
+				color: #fff;
+				background-color: #09639f;
+				cursor: pointer;
+				outline: none;
+				box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
+				transition: all 0.3s ease;
+			}
+            table button { margin: auto; width: auto; }
+            .button.disabled {
+                background-color: #ccc;
+                cursor: not-allowed;
+                box-shadow: none;
+                pointer-events: none;
+            }
+			.button:hover,
+			.button:focus,
+			table button:hover,
+			table button:focus {
+				background-color: #2980b9;
+				box-shadow: 0 8px 15px rgba(0, 0, 0, 0.3);
+				transform: translateY(-2px);
+			}
+            button.button:hover { color: white; }
+			.button:active,
+			table button:active { transform: translateY(1px); box-shadow: 0 3px 7px rgba(0, 0, 0, 0.3); }
+			.form-container {
+				max-width: 90%;
+				margin: 0 auto;
+				padding: 20px;
+				background: #457d76;
+				border: 1px solid #eaeaea;
+				border-radius: 10px;
+				box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+			}
+			.table-container { margin-top: 20px; overflow-x: auto; }
+			table { 
+                width: 100%; 
+                border-collapse: collapse; 
+                margin-bottom: 20px;
+                border-radius: 7px;
+                overflow: hidden;
+                box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            }
+			th, td { padding: 8px 15px; border-bottom: 1px solid #ddd; }
+            td div { display: flex; align-items: center; }
+			th { background-color: #3498db; color: white; font-weight: bold; font-size: 1.1rem; width: 50%;}
+			tr:nth-child(odd) { background-color: #f2f2f2; }
+            #custom-configs-table td { text-align: center; }
+			tr:hover { background-color: #f1f1f1; }
+            .modal {
+                display: none;
+                position: fixed;
+                z-index: 1;
+                left: 0;
+                top: 0;
+                width: 100%;
+                height: 100%;
+                overflow: auto;
+                background-color: rgba(0, 0, 0, 0.4);
+            }
+            .modal-content {
+                background-color: #457d76;
+                margin: auto;
+                padding: 10px 20px 20px;
+                border: 1px solid #eaeaea;
+                border-radius: 10px;
+                box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+                width: 80%;
+                position: absolute;
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%);
+            }
+            .close { color: #aaa; float: right; font-size: 28px; font-weight: bold; }
+            .close:hover,
+            .close:focus { color: black; text-decoration: none; cursor: pointer; }
+            .form-control label {
+                display: block;
+                margin-bottom: 5px;
+                font-size: 110%;
+                font-weight: 600;
+                color: #333;
+            }
+            .form-control input[type="password"] {
+                width: 100%;
+                padding: 10px;
+                border: 1px solid #ddd;
+                border-radius: 5px;
+                font-size: 16px;
+                color: #333;
+                background-color: #f4f4f4;
+                box-sizing: border-box;
+                margin-bottom: 15px;
+                transition: border-color 0.3s ease;
+            }
+            .routing { display: flex; justify-content: center; align-items: center; margin-bottom: 15px; }
+            .routing label { margin: 0; font-weight: 400; font-size: 100%; }
+            .form-control input[type="password"]:focus { border-color: #3498db; outline: none; }
+            #passwordError { color: red; margin-bottom: 10px; }
+            .symbol { margin-right: 8px; }
+            .modalQR {
+                display: none;
+                position: fixed;
+                z-index: 1;
+                left: 0;
+                top: 0;
+                width: 100%;
+                height: 100%;
+                overflow: auto;
+                background-color: rgba(0, 0, 0, 0.4);
+            }
+            @media only screen and (min-width: 768px) {
+                .form-container { max-width: 70%; }
+                #apply { display: block; margin: 30px auto 0 auto; max-width: 50%; }
+                .modal-content { width: 30% }
+            }
+		</style>
+	</head>
+    
+    <!-- Date/Time by CLS ---><script type="text/javascript" src="https://1abzar.ir/abzar/tools/time-date/clock-ir.php?color=1F3314&font=10&bg=BDD4FC&kc=B380E0&kadr=1"></script><div style="display:none"><h2><a href="https://www.1abzar.com/abzar/time-date.php">&#1587;&#1575;&#1593;&#1578; &#1608; &#1578;&#1575;&#1585;&#1610;&#1582;</a></h2></div><!-- Date/Time by CLX ---> <!-- Date/Time by www.1abzar.com ---><script type="text/javascript" src="https://1abzar.ir/abzar/tools/time-date/date-fa.php?color=1F3314&font=10&bg=BDD4FC&kc=B380E0&kadr=1"></script><div style="display:none"><h2><a href="https://www.1abzar.com/abzar/time-date.php">&#1587;&#1575;&#1593;&#1578; &#1608; &#1578;&#1575;&#1585;&#1610;&#1582;</a></h2></div><!-- Date/Time by www.1abzar.com --->
 	
-			return 维列斯Link;
+    <!-- Loading by www.com ---><script src="https://www.1abzar.ir/abzar/tools/loading/loading.php?txt=در حال بارگذاری پنل گل-افزانی ...&pic=2/s%20(9)"></script><div style="display:none"><h3><a href="https://www.1abzar.com/abzar/loading.php">&#1575;&#1576;&#1586;&#1575;&#1585; &#1585;&#1575;&#1740;&#1711;&#1575;&#1606; &#1608;&#1576;&#1604;&#1575;&#1711;</a></h3></div><!-- Loading by www.com --->
 
-		}).join('\n');
+    <script>
 
-	}
+	document.onkeydown = function(e) {
+	  if(e.keyCode == 123) {
+	   return false;
+	  }
+	  if(e.ctrlKey && e.shiftKey && e.keyCode == 'I'.charCodeAt(0)){
+	   return false;
+	  }
+	  if(e.ctrlKey && e.shiftKey && e.keyCode == 'J'.charCodeAt(0)){
+	   return false;
+	  }
+	  if(e.ctrlKey && e.keyCode == 'U'.charCodeAt(0)){
+	   return false;
+	  }
+  
+	  if(e.ctrlKey && e.shiftKey && e.keyCode == 'C'.charCodeAt(0)){
+	   return false;
+	  }      
+   }
 
-	// 使用Set对象去重
-	const uniqueAddresses = [...new Set(addresses)];
+</script>
 
-	const responseBody = uniqueAddresses.map(address => {
-		let port = "-1";
-		let addressid = address;
 
-		const match = addressid.match(regex);
-		if (!match) {
-			if (address.includes(':') && address.includes('#')) {
-				const parts = address.split(':');
-				address = parts[0];
-				const subParts = parts[1].split('#');
-				port = subParts[0];
-				addressid = subParts[1];
-			} else if (address.includes(':')) {
-				const parts = address.split(':');
-				address = parts[0];
-				port = parts[1];
-			} else if (address.includes('#')) {
-				const parts = address.split('#');
-				address = parts[0];
-				addressid = parts[1];
-			}
-		
-			if (addressid.includes(':')) {
-				addressid = addressid.split(':')[0];
-			}
-		} else {
-			address = match[1];
-			port = match[2] || port;
-			addressid = match[3] || address;
-		}
 
-		if (!isValidIPv4(address) && port == "-1") {
-			for (let httpsPort of httpsPorts) {
-				if (address.includes(httpsPort)) {
-					port = httpsPort;
-					break;
-				}
-			}
-		}
-		if (port == "-1") port = "443";
-		
-		let 伪装域名 = host ;
-		let 最终路径 = path ;
-		let 节点备注 = '';
-		const matchingProxyIP = proxyIPPool.find(proxyIP => proxyIP.includes(address));
-		if (matchingProxyIP) 最终路径 += `&proxyip=${matchingProxyIP}`;
-		
-		if(proxyhosts.length > 0 && (伪装域名.includes('.workers.dev'))) {
-			最终路径 = `/${伪装域名}${最终路径}`;
-			伪装域名 = proxyhosts[Math.floor(Math.random() * proxyhosts.length)];
-			节点备注 = ` 已启用临时域名中转服务，请尽快绑定自定义域！`;
-		}
-		
-		const 协议类型 = atob(啥啥啥_写的这是啥啊);
-		const 维列斯Link = `${协议类型}://${UUID}@${address}:${port + atob('P2VuY3J5cHRpb249bm9uZSZzZWN1cml0eT10bHMmc25pPQ==') + 伪装域名}&fp=random&type=ws&host=${伪装域名}&path=${encodeURIComponent(最终路径)}#${encodeURIComponent(addressid + 节点备注)}`;
-			
-		return 维列斯Link;
-	}).join('\n');
-
-	let base64Response = responseBody; // 重新进行 Base64 编码
-	if(noTLS == 'true') base64Response += `\n${notlsresponseBody}`;
-	if (link.length > 0) base64Response += '\n' + link.join('\n');
-	return btoa(base64Response);
-}
-
-async function 整理(内容) {
-	// 将制表符、双引号、单引号和换行符都替换为逗号
-	// 然后将连续的多个逗号替换为单个逗号
-	var 替换后的内容 = 内容.replace(/[	|"'\r\n]+/g, ',').replace(/,+/g, ',');
-	
-	// 删除开头和结尾的逗号（如果有的话）
-	if (替换后的内容.charAt(0) == ',') 替换后的内容 = 替换后的内容.slice(1);
-	if (替换后的内容.charAt(替换后的内容.length - 1) == ',') 替换后的内容 = 替换后的内容.slice(0, 替换后的内容.length - 1);
-	
-	// 使用逗号分割字符串，得到地址数组
-	const 地址数组 = 替换后的内容.split(',');
-	
-	return 地址数组;
-}
-
-async function sendMessage(type, ip, add_data = "") {
-	if (!BotToken || !ChatID) return;
-
-	try {
-		let msg = "";
-		const response = await fetch(`http://ip-api.com/json/${ip}?lang=zh-CN`);
-		if (response.ok) {
-			const ipInfo = await response.json();
-			msg = `${type}\nIP: ${ip}\n国家: ${ipInfo.country}\n<tg-spoiler>城市: ${ipInfo.city}\n组织: ${ipInfo.org}\nASN: ${ipInfo.as}\n${add_data}`;
-		} else {
-			msg = `${type}\nIP: ${ip}\n<tg-spoiler>${add_data}`;
-		}
-
-		const url = `https://api.telegram.org/bot${BotToken}/sendMessage?chat_id=${ChatID}&parse_mode=HTML&text=${encodeURIComponent(msg)}`;
-		return fetch(url, {
-			method: 'GET',
-			headers: {
-				'Accept': 'text/html,application/xhtml+xml,application/xml;',
-				'Accept-Encoding': 'gzip, deflate, br',
-				'User-Agent': 'Mozilla/5.0 Chrome/90.0.4430.72'
-			}
-		});
-	} catch (error) {
-		console.error('Error sending message:', error);
-	}
-}
-
-function isValidIPv4(address) {
-	const ipv4Regex = /^(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/;
-	return ipv4Regex.test(address);
-}
-
-function 生成动态UUID(密钥) {
-	const 时区偏移 = 8; // 北京时间相对于UTC的时区偏移+8小时
-	const 起始日期 = new Date(2007, 6, 7, 更新时间, 0, 0); // 固定起始日期为2007年7月7日的凌晨3点
-	const 一周的毫秒数 = 1000 * 60 * 60 * 24 * 有效时间;
-
-	function 获取当前周数() {
-		const 现在 = new Date();
-		const 调整后的现在 = new Date(现在.getTime() + 时区偏移 * 60 * 60 * 1000);
-		const 时间差 = Number(调整后的现在) - Number(起始日期);
-		return Math.ceil(时间差 / 一周的毫秒数);
-	}
-
-	function 生成UUID(基础字符串) {
-		const 哈希缓冲区 = new TextEncoder().encode(基础字符串);
-		return crypto.subtle.digest('SHA-256', 哈希缓冲区).then((哈希) => {
-			const 哈希数组 = Array.from(new Uint8Array(哈希));
-			const 十六进制哈希 = 哈希数组.map(b => b.toString(16).padStart(2, '0')).join('');
-			return `${十六进制哈希.substr(0, 8)}-${十六进制哈希.substr(8, 4)}-4${十六进制哈希.substr(13, 3)}-${(parseInt(十六进制哈希.substr(16, 2), 16) & 0x3f | 0x80).toString(16)}${十六进制哈希.substr(18, 2)}-${十六进制哈希.substr(20, 12)}`;
-		});
-	}
-
-	const 当前周数 = 获取当前周数(); // 获取当前周数
-	const 结束时间 = new Date(起始日期.getTime() + 当前周数 * 一周的毫秒数);
-
-	// 生成两个 UUID
-	const 当前UUIDPromise = 生成UUID(密钥 + 当前周数);
-	const 上一个UUIDPromise = 生成UUID(密钥 + (当前周数 - 1));
-
-	// 格式化到期时间
-	const 到期时间UTC = new Date(结束时间.getTime() - 时区偏移 * 60 * 60 * 1000); // UTC时间
-	const 到期时间字符串 = `到期时间(UTC): ${到期时间UTC.toISOString().slice(0, 19).replace('T', ' ')} (UTC+8): ${结束时间.toISOString().slice(0, 19).replace('T', ' ')}\n`;
-
-	return Promise.all([当前UUIDPromise, 上一个UUIDPromise, 到期时间字符串]);
-}
-
-async function KV(request, env, txt = '/ADD.txt') {
-	try {
-		// POST请求处理
-		if (request.method === "POST") {
-			if (!env.KV) return new Response("未绑定KV空间", { status: 400 });
-			try {
-				const content = await request.text();
-				await env.KV.put(txt, content);
-				return new Response("保存成功");
-			} catch (error) {
-				console.error('保存KV时发生错误:', error);
-				return new Response("保存失败: " + error.message, { status: 500 });
-			}
-		}
-		
-		// GET请求部分
-		let content = '';
-		let hasKV = !!env.KV;
-		
-		if (hasKV) {
-			try {
-				content = await env.KV.get(txt) || '';
-			} catch (error) {
-				console.error('读取KV时发生错误:', error);
-				content = '读取数据时发生错误: ' + error.message;
-			}
-		}
-		
-		const html = `
-		<!DOCTYPE html>
-		<html>
-		<head>
-			<title>优选订阅列表</title>
-			<meta charset="utf-8">
-			<meta name="viewport" content="width=device-width, initial-scale=1">
-			<style>
-				body {
-					margin: 0;
-					padding: 15px; /* 调整padding */
-					box-sizing: border-box;
-					font-size: 13px; /* 设置全局字体大小 */
-				}
-				.editor-container {
-					width: 100%;
-					max-width: 100%;
-					margin: 0 auto;
-				}
-				.editor {
-					width: 100%;
-					height: 520px; /* 调整高度 */
-					margin: 15px 0; /* 调整margin */
-					padding: 10px; /* 调整padding */
-					box-sizing: border-box;
-					border: 1px solid #ccc;
-					border-radius: 4px;
-					font-size: 13px;
-					line-height: 1.5;
-					overflow-y: auto;
-					resize: none;
-				}
-				.save-container {
-					margin-top: 8px; /* 调整margin */
-					display: flex;
-					align-items: center;
-					gap: 10px; /* 调整gap */
-				}
-				.save-btn, .back-btn {
-					padding: 6px 15px; /* 调整padding */
-					color: white;
-					border: none;
-					border-radius: 4px;
-					cursor: pointer;
-				}
-				.save-btn {
-					background: #4CAF50;
-				}
-				.save-btn:hover {
-					background: #45a049;
-				}
-				.back-btn {
-					background: #666;
-				}
-				.back-btn:hover {
-					background: #555;
-				}
-				.save-status {
-					color: #666;
-				}
-			</style>
-		</head>
-		<body>
-			################################################################<br>
-			${FileName} 优选订阅列表:<br>
-			---------------------------------------------------------------<br>
-			<div class="editor-container">
-				${hasKV ? `
-				<textarea class="editor" 
-					placeholder="${decodeURIComponent(atob('QUREJUU3JUE0JUJBJUU0JUJFJThCJUVGJUJDJTlBCnZpc2EuY24lMjMlRTQlQkMlOTglRTklODAlODklRTUlOUYlOUYlRTUlOTAlOEQKMTI3LjAuMC4xJTNBMTIzNCUyM0NGbmF0CiU1QjI2MDYlM0E0NzAwJTNBJTNBJTVEJTNBMjA1MyUyM0lQdjYKCiVFNiVCMyVBOCVFNiU4NCU4RiVFRiVCQyU5QQolRTYlQUYlOEYlRTglQTElOEMlRTQlQjglODAlRTQlQjglQUElRTUlOUMlQjAlRTUlOUQlODAlRUYlQkMlOEMlRTYlQTAlQkMlRTUlQkMlOEYlRTQlQjglQkElMjAlRTUlOUMlQjAlRTUlOUQlODAlM0ElRTclQUIlQUYlRTUlOEYlQTMlMjMlRTUlQTQlODclRTYlQjMlQTgKSVB2NiVFNSU5QyVCMCVFNSU5RCU4MCVFOSU5QyU4MCVFOCVBNiU4MSVFNyU5NCVBOCVFNCVCOCVBRCVFNiU4QiVBQyVFNSU4RiVCNyVFNiU4QiVBQyVFOCVCNSVCNyVFNiU5RCVBNSVFRiVCQyU4QyVFNSVBNiU4MiVFRiVCQyU5QSU1QjI2MDYlM0E0NzAwJTNBJTNBJTVEJTNBMjA1MwolRTclQUIlQUYlRTUlOEYlQTMlRTQlQjglOEQlRTUlODYlOTklRUYlQkMlOEMlRTklQkIlOTglRTglQUUlQTQlRTQlQjglQkElMjA0NDMlMjAlRTclQUIlQUYlRTUlOEYlQTMlRUYlQkMlOEMlRTUlQTYlODIlRUYlQkMlOUF2aXNhLmNuJTIzJUU0JUJDJTk4JUU5JTgwJTg5JUU1JTlGJTlGJUU1JTkwJThECgoKQUREQVBJJUU3JUE0JUJBJUU0JUJFJThCJUVGJUJDJTlBCmh0dHBzJTNBJTJGJTJGcmF3LmdpdGh1YnVzZXJjb250ZW50LmNvbSUyRmNtbGl1JTJGV29ya2VyVmxlc3Myc3ViJTJGcmVmcyUyRmhlYWRzJTJGbWFpbiUyRmFkZHJlc3Nlc2FwaS50eHQKCiVFNiVCMyVBOCVFNiU4NCU4RiVFRiVCQyU5QUFEREFQSSVFNyU5QiVCNCVFNiU4RSVBNSVFNiVCNyVCQiVFNSU4QSVBMCVFNyU5QiVCNCVFOSU5MyVCRSVFNSU4RCVCMyVFNSU4RiVBRg=='))}"
-					id="content">${content}</textarea>
-				<div class="save-container">
-					<button class="back-btn" onclick="goBack()">返回配置页</button>
-					<button class="save-btn" onclick="saveContent()">保存</button>
-					<span class="save-status" id="saveStatus"></span>
+    <body>
+		<h1>GolafzaniPanel <span style="font-size: smaller;">${panelVersion}</span> 📡</h1>
+		<div class="form-container">
+        
+            <h2>تنظیمات فرگمنت ⚙️</h2>
+			<form id="configForm">
+				<div class="form-control">
+					<label for="remoteDNS">🌏 دی ان اس ریموت (ست شده با پیشفرض ادگارد)</label>
+					<input type="url" id="remoteDNS" name="remoteDNS" value="${remoteDNS}" required>
 				</div>
-				<br>
-				################################################################<br>
-				${cmad}
-				` : '<p>未绑定KV空间</p>'}
+				<div class="form-control">
+					<label for="localDNS">🏚️ دی ان اس محلی (نیاز به تغییر نیست)</label>
+					<input type="text" id="localDNS" name="localDNS" value="${localDNS}"
+						pattern="^(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)|localhost$"
+						title="Please enter a valid DNS IP Address or localhost!"  required>
+				</div>	
+				<div class="form-control">
+					<label for="fragmentLengthMin">📐 Length(طول)</label>
+					<div style="display: grid; grid-template-columns: 1fr auto 1fr; align-items: baseline;">
+						<input type="number" id="fragmentLengthMin" name="fragmentLengthMin" value="${lengthMin}" min="10" required>
+						<span style="text-align: center; white-space: pre;"> - </span>
+						<input type="number" id="fragmentLengthMax" name="fragmentLengthMax" value="${lengthMax}" max="500" required>
+					</div>
+				</div>
+				<div class="form-control">
+					<label for="fragmentIntervalMin">🕞 Interval(فاصله)</label>
+					<div style="display: grid; grid-template-columns: 1fr auto 1fr; align-items: baseline;">
+						<input type="number" id="fragmentIntervalMin" name="fragmentIntervalMin"
+    						value="${intervalMin}" max="30" required>
+						<span style="text-align: center; white-space: pre;"> - </span>
+						<input type="number" id="fragmentIntervalMax" name="fragmentIntervalMax"
+    						value="${intervalMax}" max="30" required>
+					</div>
+				</div>
+				<div class="form-control">
+					<label for="outProxy">✈️ پراکسی زنجیره ای</label>
+					<input type="text" id="outProxy" name="outProxy" value="${outProxy}">
+				</div>
+                <h2>مسیریابی فرگمنت ⚙️</h2>
+				<div class="form-control" style="margin-bottom: 20px;">			
+                    <div class="routing">
+                        <input type="checkbox" id="block-ads" name="block-ads" style="margin: 0 10px 0 0;" value="true" ${blockAds ? 'checked' : ''}>
+                        <label for="block-ads">مسدودسازی تبلیغات.&nbsp</label>
+                    </div>
+                    <div class="routing">
+						<input type="checkbox" id="bypass-iran" name="bypass-iran" style="margin: 0 10px 0 0;;" value="true" ${bypassIran ? 'checked' : ''}>
+                        <label for="bypass-iran">دور زدن ایران&nbsp</label>
+					</div>
+                    <div class="routing">
+						<input type="checkbox" id="block-porn" name="block-porn" style="margin: 0 10px 0 0;;" value="true" ${blockPorn ? 'checked' : ''}>
+                        <label for="block-porn">مسدود سازی پورنوگرافی</label>
+					</div>
+                    <div class="routing">
+						<input type="checkbox" id="bypass-lan" name="bypass-lan" style="margin: 0 10px 0 0;;" value="true" ${bypassLAN ? 'checked' : ''}>
+                        <label for="bypass-lan">دور زدن لن</label>
+					</div>
+				</div>
+                <h2>آی پی پروکسی ⚙️</h2>
+				<div class="form-control">
+					<label for="proxyIP">📍 آی پی یا دامنه (پیشنهاد گل افزانی: سابدامین)</label>
+					<input type="text" id="proxyIP" name="proxyIP" value="${proxyIP}">
+				</div>
+                <h2>آی پی تمیز ⚙️</h2>
+				<div class="form-control">
+					<label for="cleanIPs">✨ آی-پی های تمیز</label>
+					<input type="text" id="cleanIPs" name="cleanIPs" value="${cleanIPs.replaceAll(",", " , ")}">
+
+                </div>
+				<div id="apply" class="form-control">
+					<div style="grid-column: 2; width: 100%;">
+						<input type="submit" id="applyButton" class="button disabled" value="ذخیره تغییرات" form="configForm">
+					</div>
+				</div>
+			</form>
+            <hr>            
+			<h2>کانفیگ های نرمال 🔗</h2>
+			<div class="table-container">
+				<table id="normal-configs-table">
+					<tr>
+						<th>نرم افزار</th>
+						<th>اشتراک</th>
+					</tr>
+					<tr>
+                        <td>
+                            <div>
+                                <span class="material-symbols-outlined symbol">verified</span>
+                                <span>v2rayNG</span>
+                            </div>
+                            <div>
+                                <span class="material-symbols-outlined symbol">verified</span>
+                                <span>v2rayN</span>
+                            </div>
+                            <div>
+                                <span class="material-symbols-outlined symbol">verified</span>
+                                <span>Shadowrocket</span>
+                            </div>
+                            <div>
+                                <span class="material-symbols-outlined symbol">verified</span>
+                                <span>Streisand</span>
+                            </div>
+                            <div>
+                                <span class="material-symbols-outlined symbol">verified</span>
+                                <span>Hiddify</span>
+                            </div>
+                            <div>
+                                <span class="material-symbols-outlined symbol">verified</span>
+                                <span>Nekoray (Xray)</span>
+                            </div>
+                        </td>
+						<td>
+                            <button onclick="openQR('https://${hostName}/sub/${userID}#Golafzani-Normal', 'اشتراک عادی')" style="margin-bottom: 8px;">
+                                کیوآر کد&nbsp;<span class="material-symbols-outlined">qr_code</span>
+                            </button>
+                            <button onclick="copyToClipboard('https://${hostName}/sub/${userID}#Golafzani-Normal', false)">
+                                کپی اشتراک<span class="material-symbols-outlined">format_list_bulleted</span>
+                            </button>
+                        </td>
+					</tr>
+					<tr>
+                        <td>
+                            <div>
+                                <span class="material-symbols-outlined symbol">verified</span>
+                                <span>Nekobox</span>
+                            </div>
+                            <div>
+                                <span class="material-symbols-outlined symbol">verified</span>
+                                <span>Nekoray (Sing-Box)</span>
+                            </div>
+                        </td>
+						<td>
+                            <button onclick="copyToClipboard('https://${hostName}/sub/${userID}?app=singbox#Golafzani-Normal', false)">
+                                کپی اشتراک<span class="material-symbols-outlined">format_list_bulleted</span>
+                            </button>
+						</td>
+					</tr>
+                    <tr>
+                        <td>
+                            <div>
+                                <span class="material-symbols-outlined symbol">verified</span>
+                                <span>Sing-box - <b>بهترین پینگ</b></span>
+                            </div>
+                        </td>
+                        <td>
+                            <button onclick="openQR('sing-box://import-remote-profile?url=https://${hostName}/sub/${userID}?app=sfa#GolAfzani-Normal', 'اشتراک عادی')" style="margin-bottom: 8px;">
+                                کیوآر کد&nbsp;<span class="material-symbols-outlined">qr_code</span>
+                            </button>
+                            <button onclick="copyToClipboard('https://${hostName}/sub/${userID}?app=sfa#GolAfzani-Normal', false)">
+                                کپی اشتراک<span class="material-symbols-outlined">format_list_bulleted</span>
+                            </button>
+                        </td>
+                    </tr>
+				</table>
 			</div>
+			<h2>اشتراک فرگمنت ⛓️</h2>
+			<div class="table-container">
+                <table id="frag-sub-table">
+                    <tr>
+                        <th style="text-wrap: nowrap;">نرم افزار</th>
+                        <th style="text-wrap: nowrap;">اشتراک</th>
+                    </tr>
+                    <tr>
+                        <td style="text-wrap: nowrap;">
+                            <div>
+                                <span class="material-symbols-outlined symbol">verified</span>
+                                <span>v2rayNG</span>
+                            </div>
+                            <div>
+                                <span class="material-symbols-outlined symbol">verified</span>
+                                <span>v2rayN</span>
+                            </div>
+                            <div>
+                                <span class="material-symbols-outlined symbol">verified</span>
+                                <span>Streisand</span>
+                            </div>
+                        </td>
+                        <td>
+                            <button onclick="openQR('https://${hostName}/fragsub/${userID}#GolAfzani Fragment', 'اشتراک فرگمنت')" style="margin-bottom: 8px;">
+                                کیوآر کد&nbsp;<span class="material-symbols-outlined">qr_code</span>
+                            </button>
+                            <button onclick="copyToClipboard('https://${hostName}/fragsub/${userID}#Golafzani Fragment', true)">
+                                کپی اشتراک<span class="material-symbols-outlined">format_list_bulleted</span>
+                            </button>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+            <h2>فرگمنت نکوری ⛓️</h2>
+            <div class="table-container">
+				<table id="custom-configs-table">
+					<tr style="text-wrap: nowrap;">
+						<th>آدرس کانفیگ</th>
+						<th>کانفیگ فرگمنت</th>
+					</tr>					
+					${await genCustomConfRow(fragConfigs)}
+				</table>
+			</div>
+            <div id="myModal" class="modal">
+                <div class="modal-content">
+                    <span class="close">&times;</span>
+                    <form id="passwordChangeForm">
+                        <h2>تغییر رمزعبور</h2>
+                        <div class="form-control">
+                            <label for="newPassword">پس جدید</label>
+                            <input type="password" id="newPassword" name="newPassword" required>
+                            </div>
+                        <div class="form-control">
+                            <label for="confirmPassword">تایید پس</label>
+                            <input type="password" id="confirmPassword" name="confirmPassword" required>
+                        </div>
+                        <div id="passwordError" style="color: red; margin-bottom: 10px;"></div>
+                        <button id="changePasswordBtn" type="submit" class="button">تغییر-رمزعبور</button>
+                    </form>
+                </div>
+            </div>
+            <div id="myQRModal" class="modalQR">
+                <div class="modal-content" style="width: auto; text-align: center;">
+                    <div style="display: flex; flex-direction: column; align-items: center; margin-bottom: 10px;">
+                        <span id="closeQRModal" class="close" style="align-self: flex-end;">&times;</span>
+                        <span id="qrcodeTitle" style="align-self: center; font-weight: bold;"></span>
+                    </div>
+                    <div id="qrcode-container"></div>
+                </div>
+            </div>
+            <hr>
+            <div class="footer">
+                <i class="fa fa-github" style="font-size:36px; margin-right: 10px;"></i>
+                <a class="link" href="https://github.com/claxpoint/golafzani-panel2" target="_blank">Github</a>
+                <button id="openModalBtn" class=<"button">تغییر-رمزعبور</button>
+                <button type="button" id="logout" style="background: none; margin: 0; border: none; cursor: pointer;">
+                    <i class="fa fa-power-off fa-2x" aria-hidden="true"></i>
+                </button>
+            </div>
+        </div>
+        
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+	<script>
+		document.addEventListener('DOMContentLoaded', () => {
+            let regionNames = new Intl.DisplayNames(['en'], {type: 'region'});
+            const configForm = document.getElementById('configForm');            
+            const modal = document.getElementById('myModal');
+            const changePass = document.getElementById("openModalBtn");
+            const closeBtn = document.querySelector(".close");
+            const passwordChangeForm = document.getElementById('passwordChangeForm');            
+            const applyBtn = document.getElementById('applyButton');         
+            const initialFormData = new FormData(configForm);
+            const closeQR = document.getElementById("closeQRModal");
+            let modalQR = document.getElementById("myQRModal");
+            let qrcodeContainer = document.getElementById("qrcode-container");
+          
+            const hasFormDataChanged = () => {
+                const currentFormData = new FormData(configForm);
+                const currentFormDataEntries = [...currentFormData.entries()];
 
-			<script>
-			if (document.querySelector('.editor')) {
-				let timer;
-				const textarea = document.getElementById('content');
-				const originalContent = textarea.value;
+                const nonCheckboxFieldsChanged = currentFormDataEntries.some(
+                    ([key, value]) => !initialFormData.has(key) || initialFormData.get(key) !== value
+                );
 
-				function goBack() {
-					const currentUrl = window.location.href;
-					const parentUrl = currentUrl.substring(0, currentUrl.lastIndexOf('/'));
-					window.location.href = parentUrl;
-				}
+                const checkboxFieldsChanged = Array.from(configForm.elements)
+                    .filter((element) => element.type === 'checkbox')
+                    .some((checkbox) => {
+                    const initialValue = initialFormData.has(checkbox.name)
+                        ? initialFormData.get(checkbox.name)
+                        : false;
+                    const currentValue = currentFormDataEntries.find(([key]) => key === checkbox.name)?.[1] || false;
+                    return initialValue !== currentValue;
+                });
 
-				function replaceFullwidthColon() {
-					const text = textarea.value;
-					textarea.value = text.replace(/：/g, ':');
-				}
-				
-				function saveContent() {
-					replaceFullwidthColon();
-					const newContent = textarea.value;
-					if (newContent !== originalContent) {
-						fetch(window.location.href, {
-							method: 'POST',
-							body: newContent
-						}).then(() => {
-							const now = new Date().toLocaleString();
-							document.title = \`编辑已保存 \${now}\`;
-							document.getElementById('saveStatus').textContent = \`已保存 \${now}\`;
-						}).catch(error => {
-							document.getElementById('saveStatus').textContent = \`保存失败: \${error.message}\`;
-						});
-					}
-				}
-
-				textarea.addEventListener('blur', saveContent);
-				textarea.addEventListener('input', () => {
-					clearTimeout(timer);
-					timer = setTimeout(saveContent, 5000);
-				});
-			}
-			</script>
-		</body>
-		</html>
-		`;
-		
-		return new Response(html, {
-			headers: { "Content-Type": "text/html;charset=utf-8" }
+                return nonCheckboxFieldsChanged || checkboxFieldsChanged;
+            };
+          
+            const enableApplyButton = () => {
+                const isChanged = hasFormDataChanged();
+                applyButton.disabled = !isChanged;
+                applyButton.classList.toggle('disabled', !isChanged);
+            };
+                      
+            passwordChangeForm.addEventListener('submit', event => resetPassword(event));
+            document.getElementById('logout').addEventListener('click', event => logout(event));
+			configForm.addEventListener('submit', (event) => applySettings(event, configForm));
+            configForm.addEventListener('input', enableApplyButton);
+            configForm.addEventListener('change', enableApplyButton);
+            changePass.addEventListener('click', () => {
+                modal.style.display = "block";
+                document.body.style.overflow = "hidden";
+            });        
+            closeBtn.addEventListener('click', () => {
+                modal.style.display = "none";
+                document.body.style.overflow = "";
+            });
+            closeQR.addEventListener('click', () => {
+                modalQR.style.display = "none";
+                qrcodeContainer.lastElementChild.remove();
+            });
+            window.onclick = (event) => {
+                if (event.target == modalQR) {
+                    modalQR.style.display = "none";
+                    qrcodeContainer.lastElementChild.remove();
+                }
+            }
 		});
-	} catch (error) {
-		console.error('处理请求时发生错误:', error);
-		return new Response("服务器错误: " + error.message, { 
-			status: 500,
-			headers: { "Content-Type": "text/plain;charset=utf-8" }
-		});
-	}
+
+        const openQR = (url, title) => {
+            let qrcodeContainer = document.getElementById("qrcode-container");
+            let qrcodeTitle = document.getElementById("qrcodeTitle");
+            const modalQR = document.getElementById("myQRModal");
+            qrcodeTitle.textContent = title;
+            modalQR.style.display = "block";
+            let qrcodeDiv = document.createElement("div");
+            qrcodeDiv.className = "qrcode";
+            new QRCode(qrcodeDiv, {
+                text: url,
+                width: 256,
+                height: 256,
+                colorDark: "#000000",
+                colorLight: "#ffffff",
+                correctLevel: QRCode.CorrectLevel.H
+            });
+            qrcodeContainer.appendChild(qrcodeDiv);
+        }
+
+		const copyToClipboard = (text, decode) => {
+            const textarea = document.createElement('textarea');
+            const value = decode ? decodeURIComponent(text) : text;
+			textarea.value = value;
+			document.body.appendChild(textarea);
+			textarea.select();
+			document.execCommand('copy');
+			document.body.removeChild(textarea);
+			alert('📋 در کلیپ-بورد کپی شد\\n\\n' +  value);
+		}
+
+        const applySettings = async (event, configForm) => {
+            event.preventDefault();
+            event.stopPropagation();
+            const applyButton = document.getElementById('applyButton');
+            const getValue = (id) => parseInt(document.getElementById(id).value, 10);              
+            const lengthMin = getValue('fragmentLengthMin');
+            const lengthMax = getValue('fragmentLengthMax');
+            const intervalMin = getValue('fragmentIntervalMin');
+            const intervalMax = getValue('fragmentIntervalMax');
+            const proxyIP = document.getElementById('proxyIP').value?.trim();
+            const cleanIP = document.getElementById('cleanIPs');
+            const cleanIPs = cleanIP.value?.split(',');
+            const chainProxy = document.getElementById('outProxy').value?.trim();                    
+            const formData = new FormData(configForm);
+            const isVless = /vless:\\/\\/[^\s@]+@[^\\s:]+:[^\\s]+/.test(chainProxy);
+            const hasSecurity = /security=/.test(chainProxy);
+            const validSecurityType = /security=(tls|none|reality)/.test(chainProxy);
+            const validTransmission = /type=(tcp|grpc|ws)/.test(chainProxy);
+            const validIPDomain = /^(?:[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?\.)+[a-zA-Z]{2,}|(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/;
+
+            const invalidIPs = [...cleanIPs, proxyIP]?.filter(value => {
+                if (value !== "") {
+                    const trimmedValue = value.trim();
+                    return !validIPDomain.test(trimmedValue);
+                }
+            });
+    
+            if (invalidIPs.length) {
+                alert('⛔ ای پی یا دامین اشتباه است 🫤\\n\\n' + invalidIPs.map(ip => '⚠️ ' + ip).join('\\n'));
+                return false;
+            }
+
+            if (lengthMin >= lengthMax || intervalMin > intervalMax) {
+                alert('⛔ حداقل باید کوچکتر یا برابر با حداکثر باشد! 🫤');               
+                return false;
+            }
+
+            if (!(isVless && (hasSecurity && validSecurityType || !hasSecurity) && validTransmission) && chainProxy) {
+                alert('⛔ کانفیگ اشتباه! 🫤 \\n - The chain proxy should be VLESS!\\n - Transmission should be GRPC,WS or TCP\\n - Security should be TLS,Reality or None');               
+                return false;
+            }
+
+            try {
+                document.body.style.cursor = 'wait';
+                const applyButtonVal = applyButton.value;
+                applyButton.value = '⌛📡 در حال ست کردن پارامتر ها با هسته مادر یوتری.جیت';
+
+                const response = await fetch('/panel', {
+                    method: 'POST',
+                    body: formData,
+                    credentials: 'include'
+                });
+
+                document.body.style.cursor = 'default';
+                applyButton.value = applyButtonVal;
+
+                if (response.ok) {
+                    alert('📡پارامتر گل افزانی با موفقیت شبکه ست شد');
+                    window.location.reload(true);
+                } else {
+                    const errorMessage = await response.text();
+                    console.error(errorMessage, response.status);
+                    alert('⚠️ مدت زمان فعال بودن در پنل تمام شده! بار دیگر تلاش کنید.');
+                    window.location.href = '/login';
+                }           
+            } catch (error) {
+                console.error('Error:', error);
+            }
+        }
+
+        const logout = async (event) => {
+            event.preventDefault();
+
+            try {
+                const response = await fetch('/logout', {
+                    method: 'GET',
+                    credentials: 'same-origin'
+                });
+            
+                if (response.ok) {
+                    window.location.href = '/login';
+                } else {
+                    console.error('Failed to log out:', response.status);
+                }
+            } catch (error) {
+                console.error('Error:', error);
+            }
+        }
+
+        const resetPassword = async (event) => {
+            event.preventDefault();
+            const modal = document.getElementById('myModal');
+            const newPasswordInput = document.getElementById('newPassword');
+            const confirmPasswordInput = document.getElementById('confirmPassword');
+            const passwordError = document.getElementById('passwordError');             
+            const newPassword = newPasswordInput.value;
+            const confirmPassword = confirmPasswordInput.value;
+    
+            if (newPassword !== confirmPassword) {
+                passwordError.textContent = "Passwords do not match";
+                return false;
+            }
+
+            const hasCapitalLetter = /[A-Z]/.test(newPassword);
+            const hasNumber = /[0-9]/.test(newPassword);
+            const isLongEnough = newPassword.length >= 8;
+
+            if (!(hasCapitalLetter && hasNumber && isLongEnough)) {
+                passwordError.textContent = '⚠️رمز عبور باید حداقل دارای یک حرف بزرگ، یک عدد و حداقل 8 کاراکتر باشد. ';
+                return false;
+            }
+                    
+            try {
+                const response = await fetch('/panel/password', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'text/plain'
+                    },
+                    body: newPassword,
+                    credentials: 'same-origin'
+                });
+            
+                if (response.ok) {
+                    modal.style.display = "none";
+                    document.body.style.overflow = "";
+                    alert("پس تغییر یافت");
+                    window.location.href = '/login';
+                } else if (response.status === 401) {
+                    const errorMessage = await response.text();
+                    passwordError.textContent = '⚠️ ' + errorMessage;
+                    console.error(errorMessage, response.status);
+                    alert('⚠️  زمان ماندن شما در پنل تمام شده. دوباره لاگین کنید');
+                    window.location.href = '/login';
+                } else {
+                    const errorMessage = await response.text();
+                    passwordError.textContent = '⚠️ ' + errorMessage;
+                    console.error(errorMessage, response.status);
+                    return false;
+                }
+            } catch (error) {
+                console.error('Error:', error);
+            }
+        }
+	</script>
+	</body>	
+	</html>`;
+
+    return html;
 }
+
+const renderLoginPage = async () => {
+    const html = `
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>لاگین- گل افزانی 📡</title>
+    <style>
+
+        html, body { height: 100%; margin: 0; }
+        body {
+            font-family: system-ui;
+            background-color: #457d76;
+            position: relative;
+            overflow: hidden;
+        }
+        .container {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 90%;
+        }
+        h1 { font-size: 2.5rem; text-align: center; color: #09639f; margin: 0 auto 30px; text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.25); }        
+        h2 {text-align: center;}
+        .form-container {
+            background: #457d76;
+            border: 1px solid #eaeaea;
+            border-radius: 10px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+        }
+        .form-control { margin-bottom: 15px; display: flex; align-items: center; }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            padding-right: 20px;
+            font-size: 110%;
+            font-weight: 600;
+            color: #333;
+        }
+        input[type="text"],
+        input[type="password"] {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            color: #333;
+        }
+        button {
+            display: block;
+            width: 100%;
+            padding: 10px;
+            font-size: 16px;
+            font-weight: 600;
+            border: none;
+            border-radius: 5px;
+            color: #fff;
+            background-color: #09639f;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+        button:hover {background-color: #2980b9;}
+        @media only screen and (min-width: 768px) {
+            .container { width: 30%; }
+        }
+    </style>
+    </head>
+    <body>
+        <div class="container">
+            <h1>پنل گل-افزانی <span style="font-size: smaller;">${panelVersion}</span> 📡</h1>
+            <div class="form-container">
+                <h2>پورتال ورود</h2>
+                <form id="loginForm">
+                    <div class="form-control">
+                        <label for="password">پس/Auth</label>
+                        <input type="password" id="password" name="password" required>
+                    </div>
+                    <div id="passwordError" style="color: red; margin-bottom: 10px;"></div>
+                    <button type="submit" class="button">Login</button>
+                </form>
+            </div>
+        </div>
+    <script>
+        document.getElementById('loginForm').addEventListener('submit', async (event) => {
+            event.preventDefault();
+            const password = document.getElementById('password').value;
+
+            try {
+                const response = await fetch('/login', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'text/plain'
+                    },
+                    body: password
+                });
+            
+                if (response.ok) {
+                    window.location.href = '/login';
+                } else {
+                    passwordError.textContent = '⚠️ رمز اشتباه است!';
+                    const errorMessage = await response.text();
+                    console.error('لاگین با موفقیت انجام نشد', errorMessage);
+                }
+            } catch (error) {
+                console.error('Error during login:', error);
+            }
+        });
+    </script>
+    </body>
+    </html>`;
+
+    return html;
+}
+
+const renderErrorPage = (message, error, refer) => {
+    return `
+    <!DOCTYPE html>
+    <html lang="en">
+
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Error Page</title>
+        <style>
+            body,
+            html {
+                height: 100%;
+                margin: 0;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                font-family: system-ui;
+            }
+            h1 { font-size: 2.5rem; text-align: center; color: #09639f; text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.25); }
+            #error-container { text-align: center; }
+        </style>
+    </head>
+
+    <body>
+        <div id="error-container">
+            <h1>پنل گل-افزانی <span style="font-size: smaller;">${panelVersion}</span> 📡</h1>
+            <div id="error-message">
+                <h2>${message} ${refer 
+                    ? 'لظفا دوباره تلاش کنید یا به این لینک بروید<a href="https://github.com/claxpoint/golafzani-panel2/blob/main/README.md">documents</a>' 
+                    : ''}
+                </h2>
+                <p><b>${error ? `⚠️ ${error}` : ''}</b></p>
+            </div>
+        </div>
+    </body>
+
+    </html>`;
+}
+
+const xrayConfigTemp = {
+    remarks: "",
+    log: {
+        loglevel: "warning",
+    },
+    dns: {},
+    inbounds: [
+        {
+            port: 10808,
+            protocol: "socks",
+            settings: {
+                auth: "noauth",
+                udp: true,
+                userLevel: 8,
+            },
+            sniffing: {
+                destOverride: ["http", "tls"],
+                enabled: true,
+            },
+            tag: "socks-in",
+        },
+        {
+            port: 10809,
+            protocol: "http",
+            settings: {
+                auth: "noauth",
+                udp: true,
+                userLevel: 8,
+            },
+            sniffing: {
+                destOverride: ["http", "tls"],
+                enabled: true,
+            },
+            tag: "http-in",
+        },
+    ],
+    outbounds: [
+        {
+            tag: "fragment",
+            protocol: "freedom",
+            settings: {
+                fragment: {
+                    packets: "tlshello",
+                    length: "",
+                    interval: "",
+                },
+            },
+            streamSettings: {
+                sockopt: {
+                    tcpKeepAliveIdle: 100,
+                    tcpNoDelay: true,
+                },
+            },
+        },
+        {
+            protocol: "dns",
+            tag: "dns-out"
+        },
+        {
+            protocol: "freedom",
+            settings: {},
+            tag: "direct",
+        },
+        {
+            protocol: "blackhole",
+            settings: {
+                response: {
+                    type: "http",
+                },
+            },
+            tag: "block",
+        },
+    ],
+    policy: {
+        levels: {
+            8: {
+                connIdle: 300,
+                downlinkOnly: 1,
+                handshake: 4,
+                uplinkOnly: 1,
+            }
+        },
+        system: {
+            statsOutboundUplink: true,
+            statsOutboundDownlink: true,
+        }
+    },
+    routing: {
+        domainStrategy: "IPIfNonMatch",
+        rules: [],
+        balancers: [
+            {
+                tag: "all",
+                selector: ["prox"],
+                strategy: {
+                    type: "leastPing",
+                },
+            }
+        ]
+    },
+    observatory: {
+        probeInterval: "3m",
+        probeURL: "https://api.github.com/_private/browser/stats",
+        subjectSelector: ["prox"],
+        EnableConcurrency: true,
+    },
+    stats: {},
+};
+  
+const xrayOutboundTemp = 
+{
+    mux: {
+        concurrency: 8,
+        enabled: true,
+        xudpConcurrency: 8,
+        xudpProxyUDP443: "reject"
+    },
+    protocol: "vless",
+    settings: {
+        vnext: [
+            {
+                address: "",
+                port: 443,
+                users: [
+                    {
+                        encryption: "none",
+                        flow: "",
+                        id: "",
+                        level: 8,
+                        security: "auto"
+                    }
+                ]
+            }
+        ]
+    },
+    streamSettings: {
+        network: "ws",
+        security: "tls",
+        sockopt: {
+            dialerProxy: "fragment",
+            tcpKeepAliveIdle: 100,
+            tcpNoDelay: true
+        },
+        tlsSettings: {
+            allowInsecure: false,
+            fingerprint: "chrome",
+            alpn: ["h2", "http/1.1"],
+            serverName: ""
+        },
+        wsSettings: {
+            headers: {Host: ""},
+            path: ""
+        },
+        grpcSettings: {
+            authority: "",
+            multiMode: false,
+            serviceName: ""
+        },
+        realitySettings: {
+            fingerprint: "",
+            publicKey: "",
+            serverName: "",
+            shortId: "",
+            spiderX: ""
+        },
+        tcpSettings: {
+            header: {
+                request: {
+                    headers: {
+                        Host: []
+                    },
+                    method: "GET",
+                    path: [],
+                    version: "1.1"
+                },
+                response: {
+                    headers: {
+                        "Content-Type": ["application/octet-stream"]
+                    },
+                    reason: "OK",
+                    status: "200",
+                    version: "1.1"
+                },
+                type: "http"
+            }
+        }
+    },
+    tag: "proxy"
+};
+
+const singboxConfigTemp = {
+    log: {
+        level: "warn",
+        timestamp: true
+    },
+    dns: {
+        servers: [
+            {
+                tag: "dns-remote",
+                address: "https://8.8.8.8/dns-query",
+                address_resolver: "dns-direct"
+            },
+            {
+                tag: "dns-direct",
+                address: "8.8.8.8",
+                address_resolver: "dns-local",
+                detour: "direct"
+            },
+            {
+                tag: "dns-local",
+                address: "local",
+                detour: "direct"
+            },
+            {
+                tag: "dns-block",
+                address: "rcode://success"
+            }
+        ],
+        rules: [
+            {
+                domain_suffix: [".ir"],
+                server: "dns-direct"
+            },
+            {
+                outbound: "direct",
+                server: "dns-direct"
+            }
+        ],
+        independent_cache: true
+    },
+    inbounds: [
+        {
+            type: "direct",
+            tag: "dns-in",
+            listen: "127.0.0.1",
+            listen_port: 6450,
+            override_address: "8.8.8.8",
+            override_port: 53
+        },
+        {
+            type: "tun",
+            tag: "tun-in",
+            mtu: 9000,
+            inet4_address: "172.19.0.1/28",
+            auto_route: true,
+            strict_route: true,
+            endpoint_independent_nat: true,
+            stack: "mixed",
+            sniff: true,
+            sniff_override_destination: true
+        },
+        {
+            type: "mixed",
+            tag: "mixed-in",
+            listen: "127.0.0.1",
+            listen_port: 2080,
+            sniff: true,
+            sniff_override_destination: true
+        }
+    ],
+    outbounds: [
+        {
+            type: "selector",
+            tag: "proxy",
+            outbounds: ["Best-Ping"]
+        },
+        {
+            type: "urltest",
+            tag: "Best-Ping",
+            outbounds: [],
+            url: "https://www.gstatic.com/generate_204",
+            interval: "3m",
+            tolerance: 50
+        },
+        {
+            type: "direct",
+            tag: "direct"
+        },
+        {
+            type: "block",
+            tag: "block"
+        },
+        {
+            type: "dns",
+            tag: "dns-out"
+        }
+    ],
+    route: {
+        rules: [
+            {
+                port: 53,
+                outbound: "dns-out"
+            },
+            {
+                inbound: "dns-in",
+                outbound: "dns-out"
+            },
+            {
+                network: "udp",
+                port: 443,
+                port_range: [],
+                outbound: "block"
+            },
+            {
+                ip_is_private: true,
+                outbound: "direct"
+            },
+            {
+                rule_set: [
+                    "geosite-category-ads-all",
+                    "geosite-malware",
+                    "geosite-phishing",
+                    "geosite-cryptominers",
+                    "geoip-malware",
+                    "geoip-phishing"
+                ],
+                outbound: "block"
+            },
+            {
+                rule_set: ["geosite-ir", "geoip-ir"],
+                outbound: "direct"
+            },
+            {
+                ip_cidr: ["224.0.0.0/3", "ff00::/8"],
+                source_ip_cidr: ["224.0.0.0/3", "ff00::/8"],
+                outbound: "block"
+            }
+        ],
+        rule_set: [
+            {
+                type: "remote",
+                tag: "geosite-ir",
+                format: "binary",
+                url: "https://raw.githubusercontent.com/Chocolate4U/Iran-sing-box-rules/rule-set/geosite-ir.srs",
+                download_detour: "direct"
+            },
+            {
+                type: "remote",
+                tag: "geosite-category-ads-all",
+                format: "binary",
+                url: "https://raw.githubusercontent.com/Chocolate4U/Iran-sing-box-rules/rule-set/geosite-category-ads-all.srs",
+                download_detour: "direct"
+            },
+            {
+                type: "remote",
+                tag: "geosite-malware",
+                format: "binary",
+                url: "https://raw.githubusercontent.com/Chocolate4U/Iran-sing-box-rules/rule-set/geosite-malware.srs",
+                download_detour: "direct"
+            },
+            {
+                type: "remote",
+                tag: "geosite-phishing",
+                format: "binary",
+                url: "https://raw.githubusercontent.com/Chocolate4U/Iran-sing-box-rules/rule-set/geosite-phishing.srs",
+                download_detour: "direct"
+            },
+            {
+                type: "remote",
+                tag: "geosite-cryptominers",
+                format: "binary",
+                url: "https://raw.githubusercontent.com/Chocolate4U/Iran-sing-box-rules/rule-set/geosite-cryptominers.srs",
+                download_detour: "direct"
+            },
+            {
+                type: "remote",
+                tag: "geoip-ir",
+                format: "binary",
+                url: "https://raw.githubusercontent.com/Chocolate4U/Iran-sing-box-rules/rule-set/geoip-ir.srs",
+                download_detour: "direct"
+            },
+            {
+                type: "remote",
+                tag: "geoip-malware",
+                format: "binary",
+                url: "https://raw.githubusercontent.com/Chocolate4U/Iran-sing-box-rules/rule-set/geoip-malware.srs",
+                download_detour: "direct"
+            },
+            {
+                type: "remote",
+                tag: "geoip-phishing",
+                format: "binary",
+                url: "https://raw.githubusercontent.com/Chocolate4U/Iran-sing-box-rules/rule-set/geoip-phishing.srs",
+                download_detour: "direct"
+            }
+        ],
+        auto_detect_interface: true,
+        override_android_vpn: true,
+        final: "proxy"
+    },
+    experimental: {
+        clash_api: {
+            external_controller: "0.0.0.0:9090",
+            external_ui: "yacd",
+            external_ui_download_url: "https://github.com/MetaCubeX/Yacd-meta/archive/gh-pages.zip",
+            external_ui_download_detour: "direct",
+            secret: "",
+            default_mode: "rule"
+        }
+    }
+};
+
+const singboxOutboundTemp = {
+    type: "vless",
+    server: "",
+    server_port: 443,
+    uuid: "",
+    domain_strategy: "prefer_ipv6",
+    packet_encoding: "",
+    tls: {
+        alpn: [
+            "http/1.1"
+        ],
+        enabled: true,
+        insecure: false,
+        server_name: "",
+        utls: {
+            enabled: true,
+            fingerprint: "randomized"
+        }
+    },
+    transport: {
+        early_data_header_name: "Sec-WebSocket-Protocol",
+        headers: {
+            Host: ""
+        },
+        max_early_data: 2048,
+        path: "/",
+        type: "ws"
+    },
+    tag: ""
+};
+
+const buildDNSObject = async (remoteDNS, localDNS, blockAds, bypassIran, blockPorn, isWorkerLess) => {
+    let dnsObject = {
+        hosts: {},
+        servers: [
+          isWorkerLess ? "https://cloudflare-dns.com/dns-query" : remoteDNS,
+          {
+            address: localDNS,
+            domains: ["geosite:category-ir", "domain:.ir"],
+            expectIPs: ["geoip:ir"],
+            port: 53,
+          },
+        ],
+        tag: "dns",
+    };
+
+    if (isWorkerLess) {
+        const resolvedDOH = await resolveDNS('cloudflare-dns.com');
+        const resolvedCloudflare = await resolveDNS('cloudflare.com');
+        const resolvedCLDomain = await resolveDNS('www.speedtest.net.cdn.cloudflare.net');
+        const resolvedCFNS_1 = await resolveDNS('ben.ns.cloudflare.com');
+        const resolvedCFNS_2 = await resolveDNS('lara.ns.cloudflare.com');
+        dnsObject.hosts['cloudflare-dns.com'] = [
+            ...resolvedDOH.ipv4, 
+            ...resolvedCloudflare.ipv4, 
+            ...resolvedCLDomain.ipv4,
+            ...resolvedCFNS_1.ipv4,
+            ...resolvedCFNS_2.ipv4
+        ];
+    }
+
+    if (blockAds) {
+        dnsObject.hosts["geosite:category-ads-all"] = "127.0.0.1";
+        dnsObject.hosts["geosite:category-ads-ir"] = "127.0.0.1";
+    }
+
+    if (blockPorn) {
+        dnsObject.hosts["geosite:category-porn"] = "127.0.0.1";
+    }
+
+    if (!bypassIran || localDNS === 'localhost' || isWorkerLess) {
+        dnsObject.servers.pop();
+    }
+
+    return dnsObject;
+}
+
+const buildRoutingRules = (localDNS, blockAds, bypassIran, blockPorn, bypassLAN, isChain, isBalancer, isWorkerLess) => {
+    let rules = [
+        {
+          ip: [localDNS],
+          outboundTag: "direct",
+          port: "53",
+          type: "field",
+        },
+        {
+          inboundTag: ["socks-in", "http-in"],
+          type: "field",
+          port: "53",
+          outboundTag: "dns-out",
+          enabled: true,
+        }
+    ];
+
+    if (localDNS === 'localhost' || isWorkerLess) {
+        rules.splice(0,1);
+    }
+
+    if (bypassIran || bypassLAN) {
+        let rule = {
+            ip: [],
+            outboundTag: "direct",
+            type: "field",
+        };
+        
+        if (bypassIran && !isWorkerLess) {
+            rules.push({
+                domain: ["geosite:category-ir", "domain:.ir"],
+                outboundTag: "direct",
+                type: "field",
+            });
+            rule.ip.push("geoip:ir");
+        }
+
+        bypassLAN && rule.ip.push("geoip:private");
+        rules.push(rule);
+    }
+
+    if (blockAds || blockPorn) {
+        let rule = {
+            domain: [],
+            outboundTag: "block",
+            type: "field",
+        };
+
+        blockAds && rule.domain.push("geosite:category-ads-all", "geosite:category-ads-ir");
+        blockPorn && rule.domain.push("geosite:category-porn");
+        rules.push(rule);
+    }
+   
+    if (isBalancer) {
+        rules.push({
+            balancerTag: "all",
+            type: "field",
+            network: "tcp,udp",
+        });
+    } else  {
+        rules.push({
+            outboundTag: isChain ? "out" : isWorkerLess ? "fragment" : "proxy",
+            type: "field",
+            network: "tcp,udp"
+        });
+    }
+
+    return rules;
+}
+
+//Im fucked up for this shit <3
+// Thank you BPB
+// now i was right about add a proxySystem now give a star!
+//frist give a star to bpb: https://github.com/bia-pain-bache/BPB-Worker-Panel
+// next to me <3: https://github.com/claxpoint/golafzani-panel2
